@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Yeni Sporcu Ekle · U14 A · Antrenör Paneli</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#0F0D0C; --surface:#1A1714; --surface-2:#26211D; --surface-3:#322B26;
+      --accent:#FF4D00; --accent-2:#FF6A26;
+      --text:#F5F5F5; --text-muted:#8A857F; --text-dim:#575451;
+      --border:rgba(255,255,255,0.06); --border-strong:rgba(255,255,255,0.12);
+      --success:#3DDC84; --error:#FF4545; --warning:#FFA94D;
+      --font-display:"Cabinet Grotesk",system-ui,sans-serif;
+      --font-hero:"Instrument Serif",Georgia,serif;
+      --font-body:"DM Sans",system-ui,sans-serif;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html, body { background:var(--bg); color:var(--text); font-family:var(--font-body); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; min-height:100vh; padding-bottom:96px; }
+    body { max-width:680px; margin:0 auto; }
+
+    .topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:var(--surface); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10; }
+    .topbar-left { display:flex; align-items:center; gap:10px; }
+    .brand-mark { width:4px; height:20px; background:var(--accent); }
+    .brand-name { font-family:var(--font-display); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:1.5px; }
+    .role-chip { font-family:var(--font-display); font-weight:800; font-size:9px; text-transform:uppercase; letter-spacing:1.5px; padding:4px 8px; background:var(--surface-2); color:var(--text-muted); }
+    .btn-ghost { background:transparent; border:none; color:var(--text-muted); font-family:var(--font-display); font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:1px; padding:8px 12px; cursor:pointer; }
+    .btn-ghost:hover { color:var(--text); }
+
+    .breadcrumb {
+      padding:14px 20px 0;
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+    }
+    .breadcrumb span { color:var(--text-dim); margin:0 6px; }
+    .breadcrumb strong { color:var(--accent); font-weight:800; }
+
+    .page-header { padding:12px 20px 20px; border-bottom:1px solid var(--border); }
+    .page-title { font-family:var(--font-display); font-weight:800; font-size:32px; text-transform:uppercase; letter-spacing:-0.8px; line-height:0.95; margin-bottom:6px; }
+    .page-sub { font-family:var(--font-body); font-size:13px; color:var(--text-muted); }
+
+    .form { padding:24px 20px; display:flex; flex-direction:column; gap:32px; }
+
+    .form-section {
+      display:flex; flex-direction:column; gap:14px;
+    }
+
+    .section-eyebrow {
+      display:flex; align-items:center; gap:8px;
+      padding-bottom:8px; border-bottom:1px solid var(--border);
+    }
+    .section-num {
+      font-family:var(--font-hero); font-style:italic; font-size:24px;
+      color:var(--accent); line-height:1; letter-spacing:-0.5px;
+    }
+    .section-eyebrow-text {
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text);
+    }
+
+    .field { display:flex; flex-direction:column; gap:6px; }
+    .field-label {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+    }
+    .field-label-req::after { content:" *"; color:var(--accent); }
+    .field-helper {
+      font-family:var(--font-body); font-size:11px; color:var(--text-dim);
+      margin-top:2px;
+    }
+
+    .input, .select, .textarea {
+      background:var(--surface);
+      border:1px solid var(--border-strong);
+      color:var(--text);
+      font-family:var(--font-body);
+      font-size:15px;
+      padding:12px 14px;
+      width:100%;
+      outline:none;
+      transition:border-color 150ms ease-out;
+    }
+    .input:focus, .select:focus, .textarea:focus { border-color:var(--accent); }
+    .input::placeholder, .textarea::placeholder { color:var(--text-dim); }
+    .textarea { resize:vertical; min-height:80px; font-family:var(--font-body); }
+
+    /* Two-column row */
+    .row-2col { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media (max-width: 500px) { .row-2col { grid-template-columns:1fr; } }
+
+    /* Position pills */
+    .position-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; }
+    .position-pill {
+      background:var(--surface);
+      border:1px solid var(--border-strong);
+      color:var(--text-muted);
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:0.5px;
+      padding:12px 8px; cursor:pointer;
+      transition:all 150ms;
+      text-align:center;
+    }
+    .position-pill:hover { color:var(--text); }
+    .position-pill.selected {
+      background:var(--surface-2); color:var(--accent);
+      border-color:var(--accent);
+    }
+
+    /* Jersey suggestions */
+    .jersey-row { display:grid; grid-template-columns:120px 1fr; gap:10px; align-items:end; }
+    .jersey-input {
+      background:var(--surface); border:1px solid var(--border-strong); color:var(--text);
+      font-family:var(--font-hero); font-style:italic; font-size:32px;
+      text-align:center; padding:14px 8px;
+      width:100%; outline:none; letter-spacing:-1px;
+      transition:border-color 150ms;
+    }
+    .jersey-input:focus { border-color:var(--accent); }
+    .jersey-suggestions { display:flex; gap:6px; flex-wrap:wrap; }
+    .jersey-pill {
+      background:var(--surface-2); border:none; color:var(--text-muted);
+      font-family:var(--font-hero); font-style:italic; font-size:14px;
+      padding:8px 12px; cursor:pointer; letter-spacing:-0.3px;
+      transition:all 150ms;
+    }
+    .jersey-pill:hover { background:var(--surface-3); color:var(--text); }
+    .jersey-pill-label {
+      font-family:var(--font-display); font-weight:800; font-size:9px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-dim);
+      width:100%; margin-bottom:4px;
+    }
+
+    /* Phone input */
+    .phone-row { display:grid; grid-template-columns:auto 1fr; gap:8px; }
+    .phone-prefix {
+      background:var(--surface-2);
+      border:1px solid var(--border-strong);
+      color:var(--text-muted);
+      font-family:var(--font-body); font-size:14px; font-weight:500;
+      padding:12px 14px;
+      display:flex; align-items:center;
+    }
+
+    /* KVKK info card */
+    .kvkk-card {
+      background:var(--surface-2);
+      padding:18px 18px;
+      border-left:3px solid var(--accent);
+      display:flex; gap:14px; align-items:flex-start;
+    }
+    .kvkk-icon {
+      width:32px; height:32px; background:var(--accent); color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      flex-shrink:0;
+    }
+    .kvkk-text {
+      font-family:var(--font-body); font-size:13px; line-height:1.6; color:var(--text);
+    }
+    .kvkk-text strong { font-weight:700; }
+    .kvkk-text small {
+      display:block; margin-top:6px;
+      font-size:11px; color:var(--text-muted);
+    }
+
+    /* Bottom bar */
+    .bottom-bar {
+      position:fixed; bottom:0; left:0; right:0;
+      background:var(--surface); border-top:1px solid var(--border-strong);
+      padding:14px 20px;
+      display:grid; grid-template-columns:1fr 2fr; gap:10px;
+      max-width:680px; margin:0 auto;
+      z-index:20;
+    }
+    .bottom-bar__btn {
+      background:var(--surface-2); border:none; color:var(--text);
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:1px;
+      padding:14px; cursor:pointer; transition:background 150ms;
+    }
+    .bottom-bar__btn:hover { background:var(--surface-3); }
+    .bottom-bar__btn--cta {
+      background:var(--accent); color:#fff;
+      box-shadow:0 6px 12px rgba(255,77,0,0.30);
+    }
+    .bottom-bar__btn--cta:hover { background:var(--accent-2); }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand-mark"></div>
+      <div class="brand-name">Athlevo Club</div>
+      <div class="role-chip">Antrenör</div>
+    </div>
+    <button class="btn-ghost">← Kadroya Geri</button>
+  </header>
+
+  <nav class="breadcrumb">
+    U14 A Takım <span>›</span> Kadro <span>›</span> <strong>Yeni Sporcu</strong>
+  </nav>
+
+  <div class="page-header">
+    <h1 class="page-title">Yeni Sporcu Ekle</h1>
+    <p class="page-sub">Kadroya yeni sporcu ekle. Veliye otomatik davet bağlantısı gönderilecek.</p>
+  </div>
+
+  <form class="form" onsubmit="event.preventDefault(); alert('Mockup: sporcu eklendi, veliye davet gönderildi.');">
+
+    <!-- Section 1: Sporcu Bilgisi -->
+    <div class="form-section">
+      <div class="section-eyebrow">
+        <span class="section-num">1</span>
+        <span class="section-eyebrow-text">Sporcu Bilgisi</span>
+      </div>
+
+      <div class="row-2col">
+        <div class="field">
+          <label class="field-label field-label-req" for="ad">Ad</label>
+          <input class="input" id="ad" type="text" placeholder="Mehmet" required>
+        </div>
+        <div class="field">
+          <label class="field-label field-label-req" for="soyad">Soyad</label>
+          <input class="input" id="soyad" type="text" placeholder="Yılmaz" required>
+        </div>
+      </div>
+
+      <div class="row-2col">
+        <div class="field">
+          <label class="field-label field-label-req" for="dt">Doğum Tarihi</label>
+          <input class="input" id="dt" type="date" required>
+          <span class="field-helper">U14 takımı için: 2012-2014 doğumlu</span>
+        </div>
+        <div class="field">
+          <label class="field-label" for="boy">Boy (cm)</label>
+          <input class="input" id="boy" type="number" placeholder="172">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Pozisyon & Jersey -->
+    <div class="form-section">
+      <div class="section-eyebrow">
+        <span class="section-num">2</span>
+        <span class="section-eyebrow-text">Saha</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Pozisyon</label>
+        <div class="position-grid">
+          <button type="button" class="position-pill selected">Guard</button>
+          <button type="button" class="position-pill">Forward</button>
+          <button type="button" class="position-pill">Center</button>
+          <button type="button" class="position-pill">Diğer</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Forma Numarası</label>
+        <div class="jersey-row">
+          <input class="jersey-input" type="number" placeholder="0" min="0" max="99">
+          <div>
+            <div class="jersey-pill-label">Müsait Numaralar</div>
+            <div class="jersey-suggestions">
+              <button type="button" class="jersey-pill">3</button>
+              <button type="button" class="jersey-pill">8</button>
+              <button type="button" class="jersey-pill">12</button>
+              <button type="button" class="jersey-pill">15</button>
+              <button type="button" class="jersey-pill">19</button>
+              <button type="button" class="jersey-pill">24</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Veli İletişimi -->
+    <div class="form-section">
+      <div class="section-eyebrow">
+        <span class="section-num">3</span>
+        <span class="section-eyebrow-text">Veli İletişimi</span>
+      </div>
+
+      <div class="row-2col">
+        <div class="field">
+          <label class="field-label field-label-req" for="vad">Veli Adı Soyadı</label>
+          <input class="input" id="vad" type="text" placeholder="Ahmet Yılmaz" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="iliski">Yakınlık</label>
+          <select class="select" id="iliski">
+            <option>Baba</option>
+            <option>Anne</option>
+            <option>Vasi</option>
+            <option>Diğer</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label field-label-req" for="tel">Veli WhatsApp Numarası</label>
+        <div class="phone-row">
+          <div class="phone-prefix">🇹🇷 +90</div>
+          <input class="input" id="tel" type="tel" placeholder="555 123 4567" required>
+        </div>
+        <span class="field-helper">Maç raporları bu numaraya WhatsApp'tan gönderilir. Veli davet bağlantısı da bu numaraya gider.</span>
+      </div>
+    </div>
+
+    <!-- Section 4: Notlar (opsiyonel) -->
+    <div class="form-section">
+      <div class="section-eyebrow">
+        <span class="section-num">4</span>
+        <span class="section-eyebrow-text">Notlar (opsiyonel)</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="notlar">Antrenör notları</label>
+        <textarea class="textarea" id="notlar" placeholder="Sakatlık geçmişi, özel ihtiyaçlar, dikkat edilecek noktalar..."></textarea>
+        <span class="field-helper">Bu notlar sadece antrenörlere ve yöneticilere görünür. Veliye/sporcuya gösterilmez.</span>
+      </div>
+    </div>
+
+    <!-- KVKK uyarı -->
+    <div class="kvkk-card">
+      <div class="kvkk-icon">i</div>
+      <div class="kvkk-text">
+        <strong>KVKK Uyarısı:</strong> 18 yaş altı sporcular için veli açık rızası şart.
+        Sporcu eklendikten sonra veli WhatsApp'tan magic link ile davet edilecek, ilk girişte aydınlatma metnini onaylayacak.
+        <small>Onay alınmadan AI rapor üretilmez ve veliye mesaj gönderilmez.</small>
+      </div>
+    </div>
+
+  </form>
+
+  <nav class="bottom-bar">
+    <button class="bottom-bar__btn">İptal</button>
+    <button class="bottom-bar__btn bottom-bar__btn--cta">Sporcuyu Ekle ve Veliyi Davet Et →</button>
+  </nav>
+
+</body>
+</html>

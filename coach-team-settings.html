@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Takım Ayarları · U14 A · Antrenör Paneli</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#0F0D0C; --surface:#1A1714; --surface-2:#26211D; --surface-3:#322B26;
+      --accent:#FF4D00; --accent-2:#FF6A26;
+      --text:#F5F5F5; --text-muted:#8A857F; --text-dim:#575451;
+      --border:rgba(255,255,255,0.06); --border-strong:rgba(255,255,255,0.12);
+      --success:#3DDC84; --error:#FF4545; --warning:#FFA94D;
+      --font-display:"Cabinet Grotesk",system-ui,sans-serif;
+      --font-hero:"Instrument Serif",Georgia,serif;
+      --font-body:"DM Sans",system-ui,sans-serif;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html, body { background:var(--bg); color:var(--text); font-family:var(--font-body); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; min-height:100vh; padding-bottom:96px; }
+    body { max-width:680px; margin:0 auto; }
+
+    .topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:var(--surface); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10; }
+    .topbar-left { display:flex; align-items:center; gap:10px; }
+    .brand-mark { width:4px; height:20px; background:var(--accent); }
+    .brand-name { font-family:var(--font-display); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:1.5px; }
+    .role-chip { font-family:var(--font-display); font-weight:800; font-size:9px; text-transform:uppercase; letter-spacing:1.5px; padding:4px 8px; background:var(--surface-2); color:var(--text-muted); }
+    .btn-ghost { background:transparent; border:none; color:var(--text-muted); font-family:var(--font-display); font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:1px; padding:8px 12px; cursor:pointer; }
+    .btn-ghost:hover { color:var(--text); }
+
+    .page-header { padding:24px 20px 20px; border-bottom:1px solid var(--border); }
+    .page-eyebrow { font-family:var(--font-display); font-weight:800; font-size:10px; text-transform:uppercase; letter-spacing:2px; color:var(--accent); margin-bottom:8px; }
+    .page-title { font-family:var(--font-display); font-weight:800; font-size:32px; text-transform:uppercase; letter-spacing:-0.8px; line-height:0.95; margin-bottom:6px; }
+    .page-sub { font-family:var(--font-body); font-size:13px; color:var(--text-muted); }
+
+    .form { padding:24px 20px; display:flex; flex-direction:column; gap:32px; }
+    .form-section { display:flex; flex-direction:column; gap:14px; }
+
+    .section-eyebrow { display:flex; align-items:center; gap:8px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+    .section-num { font-family:var(--font-hero); font-style:italic; font-size:24px; color:var(--accent); line-height:1; letter-spacing:-0.5px; }
+    .section-eyebrow-text { font-family:var(--font-display); font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text); }
+
+    .field { display:flex; flex-direction:column; gap:6px; }
+    .field-label { font-family:var(--font-display); font-weight:800; font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); }
+    .field-label-req::after { content:" *"; color:var(--accent); }
+    .field-helper { font-family:var(--font-body); font-size:11px; color:var(--text-dim); margin-top:2px; }
+
+    .input, .select, .textarea {
+      background:var(--surface); border:1px solid var(--border-strong); color:var(--text);
+      font-family:var(--font-body); font-size:15px; padding:12px 14px;
+      width:100%; outline:none; transition:border-color 150ms;
+    }
+    .input:focus, .select:focus, .textarea:focus { border-color:var(--accent); }
+    .input::placeholder, .textarea::placeholder { color:var(--text-dim); }
+    .textarea { resize:vertical; min-height:80px; }
+
+    .row-2col { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media (max-width: 500px) { .row-2col { grid-template-columns:1fr; } }
+
+    /* Logo uploader */
+    .logo-upload {
+      display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:center;
+    }
+    .logo-preview {
+      width:80px; height:80px;
+      background:var(--surface-2);
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--font-display); font-weight:800; font-size:20px;
+      color:var(--accent);
+      border:1px solid var(--border-strong);
+    }
+    .logo-actions { display:flex; flex-direction:column; gap:6px; }
+    .logo-btn {
+      background:transparent; border:1px solid var(--border-strong); color:var(--text);
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1px;
+      padding:10px 14px; cursor:pointer; text-align:left;
+    }
+    .logo-btn.danger { color:var(--error); border-color:rgba(255,69,69,0.30); }
+    .logo-helper { font-family:var(--font-body); font-size:11px; color:var(--text-dim); margin-top:4px; }
+
+    /* Color picker */
+    .color-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .color-swatch {
+      width:36px; height:36px; cursor:pointer;
+      border:2px solid transparent;
+      transition:border-color 150ms;
+    }
+    .color-swatch.active { border-color:var(--text); }
+    .color-input {
+      background:var(--surface); border:1px solid var(--border-strong); color:var(--text);
+      font-family:var(--font-body); font-size:13px; padding:8px 12px;
+      width:120px; outline:none;
+    }
+
+    /* Coaches list (read-only) */
+    .coaches-list { display:flex; flex-direction:column; gap:1px; background:var(--border); }
+    .coach-row {
+      background:var(--surface);
+      padding:12px 14px;
+      display:grid; grid-template-columns:auto 1fr auto; gap:12px;
+      align-items:center;
+    }
+    .coach-avatar {
+      width:32px; height:32px; background:var(--surface-2);
+      border-radius:9999px;
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      color:var(--accent);
+      flex-shrink:0;
+    }
+    .coach-info { display:flex; flex-direction:column; gap:2px; min-width:0; }
+    .coach-name { font-family:var(--font-body); font-size:13px; color:var(--text); font-weight:500; }
+    .coach-role { font-family:var(--font-display); font-weight:800; font-size:9px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); }
+    .coach-tag {
+      font-family:var(--font-display); font-weight:800; font-size:9px;
+      text-transform:uppercase; letter-spacing:1.5px;
+      padding:3px 8px;
+    }
+    .coach-tag.head { background:rgba(255,77,0,0.10); color:var(--accent); }
+    .coach-tag.assist { background:var(--surface-2); color:var(--text-muted); }
+
+    .info-card {
+      background:var(--surface-2); padding:14px 16px;
+      font-family:var(--font-body); font-size:12px; color:var(--text-muted);
+      line-height:1.5;
+      border-left:3px solid var(--text-dim);
+    }
+    .info-card strong { color:var(--text); font-weight:600; }
+
+    /* Bottom bar */
+    .bottom-bar {
+      position:fixed; bottom:0; left:0; right:0;
+      background:var(--surface); border-top:1px solid var(--border-strong);
+      padding:14px 20px;
+      display:grid; grid-template-columns:1fr 2fr; gap:10px;
+      max-width:680px; margin:0 auto;
+      z-index:20;
+    }
+    .bottom-bar__btn {
+      background:var(--surface-2); border:none; color:var(--text);
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:1px;
+      padding:14px; cursor:pointer; transition:background 150ms;
+    }
+    .bottom-bar__btn:hover { background:var(--surface-3); }
+    .bottom-bar__btn--cta {
+      background:var(--accent); color:#fff;
+      box-shadow:0 6px 12px rgba(255,77,0,0.30);
+    }
+    .bottom-bar__btn--cta:hover { background:var(--accent-2); }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand-mark"></div>
+      <div class="brand-name">Athlevo Club</div>
+      <div class="role-chip">Antrenör</div>
+    </div>
+    <button class="btn-ghost">← Geri</button>
+  </header>
+
+  <div class="page-header">
+    <div class="page-eyebrow">Beşiktaş Altyapı · U14 A Takım</div>
+    <h1 class="page-title">Takım Ayarları</h1>
+    <p class="page-sub">Takımının genel bilgilerini düzenle. Değişiklikler tüm panellere yansır.</p>
+  </div>
+
+  <form class="form" onsubmit="event.preventDefault(); alert('Mockup: takım ayarları kaydedildi.');">
+
+    <!-- Section 1: Takım Bilgisi -->
+    <div class="form-section">
+      <div class="section-eyebrow">
+        <span class="section-num">1</span>
+        <span class="section-eyebrow-text">Takım Bilgisi</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label field-label-req" for="takim-adi">Takım Adı</label>
+        <input class="input" id="takim-adi" type="text" value="U14 A Takım" required>
+        <span class="field-helper">Raporlarda ve panel başlığında görünür.</span>
+      </div>
+
+      <div class="row-2col">
+        <div class="field">
+          <label class="field-label field-label-req" for="yas">Yaş Grubu</label>
+          <select class="select" id="yas" required>
+            <option>U10 (10 yaş ve altı)</option>
+            <option>U12 (11-12 yaş)</option>
+            <option selected>U14 (13-14 yaş)</option>
+            <option>U16 (15-16 yaş)</option>
+            <option>U18 (17-18 yaş)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label field-label-req" for="seviye">Seviye</label>
+          <select class="select" id="seviye" required>
+            <option selected>A Takım</option>
+            <option>B Takım</option>
+            <option>Hazırlık</option>
+            <option>Diğer</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="aciklama">Takım Hakkında (opsiyonel)</label>
+        <textarea class="textarea" id="aciklama" placeholder="Örn: 2025-26 sezonu ana hedef Bölge Ligi şampiyonluğu. Sezon başı 16 sporcu, 2 antrenör.">Beşiktaş Spor Kulübü altyapı U14 A takımı. Bölge Ligi'nde mücadele ediyor, 2025-26 sezonunda 14 aktif sporcu.</textarea>
+        <span class="field-helper">Veli paneline kısaca görünür, kulüp tanıtımı için kullanılır.</span>
+      </div>
+    </div>
+
+    <!-- Section 2: Logo + Renk -->
+    <div class="form-section">
+      <div class="section-eyebrow">
+        <span class="section-num">2</span>
+        <span class="section-eyebrow-text">Görsel Kimlik</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Takım Logosu</label>
+        <div class="logo-upload">
+          <div class="logo-preview">U14A</div>
+          <div class="logo-actions">
+            <button type="button" class="logo-btn">📤 Logo Yükle</button>
+            <button type="button" class="logo-btn danger">Sil</button>
+          </div>
+        </div>
+        <span class="logo-helper">Kare format, 256x256px+ önerilir. PNG / JPG / SVG.</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Takım Rengi</label>
+        <div class="color-row">
+          <div class="color-swatch active" style="background:#FF4D00;" title="Athlevo Turuncu"></div>
+          <div class="color-swatch" style="background:#000000;" title="Siyah"></div>
+          <div class="color-swatch" style="background:#FFFFFF;" title="Beyaz"></div>
+          <div class="color-swatch" style="background:#3DDC84;" title="Yeşil"></div>
+          <div class="color-swatch" style="background:#FF4545;" title="Kırmızı"></div>
+          <div class="color-swatch" style="background:#0066FF;" title="Mavi"></div>
+          <input class="color-input" type="text" value="#FF4D00" placeholder="#hex">
+        </div>
+        <span class="field-helper">Default kulüp rengi. Raporlarda accent olarak kullanılır.</span>
+      </div>
+    </div>
+
+    <!-- Section 3: Antrenör Kadrosu (read-only) -->
+    <div class="form-section">
+      <div class="section-eyebrow">
+        <span class="section-num">3</span>
+        <span class="section-eyebrow-text">Antrenör Kadrosu</span>
+      </div>
+
+      <div class="coaches-list">
+        <div class="coach-row">
+          <div class="coach-avatar">MŞ</div>
+          <div class="coach-info">
+            <div class="coach-name">Mehmet Şentürk</div>
+            <div class="coach-role">Sezon başı atandı · 9 yıllık deneyim</div>
+          </div>
+          <div class="coach-tag head">Baş Antrenör</div>
+        </div>
+        <div class="coach-row">
+          <div class="coach-avatar">EÇ</div>
+          <div class="coach-info">
+            <div class="coach-name">Erdem Çakır</div>
+            <div class="coach-role">2 ay önce atandı · Asistan</div>
+          </div>
+          <div class="coach-tag assist">Yardımcı Antrenör</div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <strong>Not:</strong> Antrenör atama / çıkarma işlemi <strong>kulüp yöneticisinin</strong> sorumluluğundadır.
+        Takıma yeni antrenör eklemek veya mevcut antrenörü çıkarmak için yöneticiyle iletişime geç.
+      </div>
+    </div>
+
+  </form>
+
+  <nav class="bottom-bar">
+    <button class="bottom-bar__btn">İptal</button>
+    <button class="bottom-bar__btn bottom-bar__btn--cta">Değişiklikleri Kaydet</button>
+  </nav>
+
+</body>
+</html>
