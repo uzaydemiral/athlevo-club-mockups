@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mehmet'in Maç Raporu · Athlevo Club</title>
+
+  <!-- Athletic Editorial / Data Brutalism font stack -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       Athlevo Club — Athletic Editorial / Data Brutalism (web v0.1)
+       Source of truth: DESIGN.md (Athlevo iOS v4.0 adaptasyonu)
+       ============================================================ */
+    :root {
+      --bg:                #0F0D0C;
+      --surface:           #1A1714;
+      --surface-2:         #26211D;
+      --accent:            #FF4D00;
+      --accent-2:          #FF6A26;
+      --accent-grad-light: #FF784D;
+      --accent-grad-dark:  #AF3200;
+      --text:              #F5F5F5;
+      --text-muted:        #8A857F;
+      --text-dim:          #575451;
+      --border:            rgba(255,255,255,0.06);
+      --border-strong:     rgba(255,255,255,0.12);
+      --success:           #3DDC84;
+      --error:             #FF4545;
+      --shadow-hero:       0 8px 20px rgba(0,0,0,0.30);
+
+      --font-display:      "Cabinet Grotesk", system-ui, sans-serif;
+      --font-hero:         "Instrument Serif", Georgia, serif;
+      --font-body:         "DM Sans", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+    }
+
+    body {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px 96px;
+    }
+
+    /* ============================================================
+       Header / Brand mark
+       ============================================================ */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 4px;
+      height: 24px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .club-tag {
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ============================================================
+       Match meta (lig, rakip, tarih)
+       ============================================================ */
+    .match-meta {
+      padding: 32px 0 16px;
+    }
+
+    .match-meta__league {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .match-meta__title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 24px;
+      text-transform: uppercase;
+      letter-spacing: -0.3px;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+
+    .match-meta__sub {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    /* ============================================================
+       Athlete hero card
+       ============================================================ */
+    .athlete-card {
+      background: var(--surface-2);
+      padding: 28px 24px;
+      margin: 24px 0 16px;
+      box-shadow: var(--shadow-hero);
+      position: relative;
+    }
+
+    .athlete-card::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--accent);
+    }
+
+    .athlete-card__eyebrow {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .athlete-card__name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 36px;
+      text-transform: uppercase;
+      letter-spacing: -0.8px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .athlete-card__pos {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .athlete-card__jersey {
+      font-family: var(--font-hero);
+      font-style: italic;
+      font-size: 28px;
+      color: var(--text);
+      letter-spacing: -1px;
+    }
+
+    /* ============================================================
+       Stats grid — hero numbers (Instrument Serif Italic)
+       ============================================================ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--border);
+      margin: 16px 0 24px;
+    }
+
+    @media (min-width: 600px) {
+      .stats-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .stat-card {
+      background: var(--surface);
+      padding: 20px 16px;
+      text-align: left;
+    }
+
+    .stat-card__value {
+      font-family: var(--font-hero);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 64px;
+      line-height: 0.95;
+      letter-spacing: -2px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .stat-card__label {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+    }
+
+    .stat-card__delta {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--success);
+      margin-top: 4px;
+      display: block;
+    }
+    .stat-card__delta--down { color: var(--error); }
+
+    /* ============================================================
+       AI Report section
+       ============================================================ */
+    .report-section {
+      margin: 32px 0;
+    }
+
+    .section-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .section-eyebrow__dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    .section-eyebrow__text {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+    }
+
+    .report-body {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .report-body p + p {
+      margin-top: 14px;
+    }
+
+    .report-body strong {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .report-signature {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ============================================================
+       Season comparison
+       ============================================================ */
+    .season-section {
+      background: var(--surface);
+      padding: 24px;
+      margin: 32px 0;
+    }
+
+    .season-section__title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+    }
+
+    .season-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: baseline;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .season-row:last-child { border-bottom: none; }
+
+    .season-row__label {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+    }
+
+    .season-row__value {
+      font-family: var(--font-hero);
+      font-style: italic;
+      font-size: 24px;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+
+    .season-row__delta {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--success);
+      min-width: 56px;
+      text-align: right;
+    }
+    .season-row__delta--down { color: var(--error); }
+    .season-row__delta--neutral { color: var(--text-muted); }
+
+    /* ============================================================
+       Footer
+       ============================================================ */
+    .footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .club-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .club-logo-placeholder {
+      width: 40px;
+      height: 40px;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--accent);
+      border: 1px solid var(--border-strong);
+    }
+
+    .club-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .club-meta {
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .powered-by {
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.5px;
+    }
+
+    .powered-by strong {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div>
+        <div class="brand-name">Athlevo Club</div>
+      </div>
+    </div>
+    <div class="club-tag">Maç Raporu · 14 May 2026</div>
+  </header>
+
+  <section class="match-meta">
+    <div class="match-meta__league">U14 BÖLGE LİGİ · 8. HAFTA</div>
+    <h1 class="match-meta__title">Beşiktaş U14<br>vs Galatasaray U14</h1>
+    <div class="match-meta__sub">Cumartesi 16:00 · Beşiktaş Akatlar Spor Salonu · 68-62 Galibiyet</div>
+  </section>
+
+  <article class="athlete-card">
+    <div class="athlete-card__eyebrow">Sporcu</div>
+    <div class="athlete-card__name">Mehmet Yılmaz</div>
+    <div class="athlete-card__pos">
+      <span class="athlete-card__jersey">7</span>
+      <span>Guard · Sezon 2025-26</span>
+    </div>
+  </article>
+
+  <section class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card__value">12</div>
+      <div class="stat-card__label">Sayı</div>
+      <span class="stat-card__delta">+4 sezon ort.</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__value">4</div>
+      <div class="stat-card__label">Asist</div>
+      <span class="stat-card__delta">+1 sezon ort.</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__value">6</div>
+      <div class="stat-card__label">Ribaund</div>
+      <span class="stat-card__delta">+2 sezon ort.</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__value">2</div>
+      <div class="stat-card__label">Top Kaybı</div>
+      <span class="stat-card__delta stat-card__delta--down">+1 sezon ort.</span>
+    </div>
+  </section>
+
+  <section class="report-section">
+    <div class="section-eyebrow">
+      <div class="section-eyebrow__dot"></div>
+      <div class="section-eyebrow__text">Antrenör Notu · AI ile derlendi</div>
+    </div>
+    <div class="report-body">
+      <p>Mehmet bugün gerçekten farklıydı. <strong>12 sayı, 4 asist</strong> — geçen maça göre net bir sıçrama. En güzeli, takımı oynatma içgüdüsü gelişiyor. Özellikle 3. periyotta arka arkaya 2 asist yaptığı an, oyunu okuduğunu gösterdi. Şut yüzdesi de iyi (%55), kararları sakindi.</p>
+      <p>Üzerinde çalışacağımız şey top kayıpları. Baskı altında biraz acele edebiliyor — özellikle son iki dakika. Önümüzdeki hafta antrenmanda buna bakalım. Pozisyonel olarak guard sorumluluğunu giderek daha iyi taşıyor; bu sezonun en belirgin gelişimi.</p>
+      <p>Aferin Mehmet, <strong>gelişim çok net görünüyor.</strong></p>
+      <div class="report-signature">— Beşiktaş Spor Kulübü Altyapı Antrenör Ekibi</div>
+    </div>
+  </section>
+
+  <section class="season-section">
+    <div class="season-section__title">Sezon İlerlemesi</div>
+
+    <div class="season-row">
+      <div class="season-row__label">Sayı Ortalama</div>
+      <div class="season-row__value">9.4</div>
+      <div class="season-row__delta">+18%</div>
+    </div>
+    <div class="season-row">
+      <div class="season-row__label">Asist Ortalama</div>
+      <div class="season-row__value">3.1</div>
+      <div class="season-row__delta">+25%</div>
+    </div>
+    <div class="season-row">
+      <div class="season-row__label">Şut Yüzdesi</div>
+      <div class="season-row__value">48%</div>
+      <div class="season-row__delta">+6 pp</div>
+    </div>
+    <div class="season-row">
+      <div class="season-row__label">Top Kaybı</div>
+      <div class="season-row__value">1.8</div>
+      <div class="season-row__delta season-row__delta--neutral">–</div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="club-block">
+      <div class="club-logo-placeholder">BJK</div>
+      <div>
+        <div class="club-name">Beşiktaş Spor Kulübü Altyapı</div>
+        <div class="club-meta">U14 Basketbol · Sezon 2025-26</div>
+      </div>
+    </div>
+    <div class="powered-by"><strong>Athlevo Club</strong> ile hazırlandı · athlevo.club</div>
+  </footer>
+
+</body>
+</html>

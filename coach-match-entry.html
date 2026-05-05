@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Maç İstatistik Girişi · Antrenör Paneli</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:           #0F0D0C;
+      --surface:      #1A1714;
+      --surface-2:    #26211D;
+      --surface-3:    #322B26;
+      --accent:       #FF4D00;
+      --accent-2:     #FF6A26;
+      --text:         #F5F5F5;
+      --text-muted:   #8A857F;
+      --text-dim:     #575451;
+      --border:       rgba(255,255,255,0.06);
+      --border-strong:rgba(255,255,255,0.12);
+      --success:      #3DDC84;
+      --error:        #FF4545;
+      --warning:      #FFA94D;
+
+      --font-display: "Cabinet Grotesk", system-ui, sans-serif;
+      --font-hero:    "Instrument Serif", Georgia, serif;
+      --font-body:    "DM Sans", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      padding-bottom: 80px;  /* space for fixed bottom CTA on mobile */
+    }
+
+    body {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    /* ==================== Top bar ==================== */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 4px;
+      height: 20px;
+      background: var(--accent);
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .role-chip {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 4px 8px;
+      background: var(--surface-2);
+      color: var(--text-muted);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: color 150ms ease-out;
+    }
+
+    .btn-ghost:hover { color: var(--text); }
+
+    /* ==================== Match scoreboard ==================== */
+    .scoreboard {
+      background: var(--surface);
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .match-meta {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .match-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: -0.3px;
+      margin-bottom: 16px;
+    }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 16px;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .team-side {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .team-side--right {
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    .team-label {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+    }
+
+    .team-score {
+      font-family: var(--font-hero);
+      font-style: italic;
+      font-size: 64px;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+
+    .team-score.us { color: var(--accent); }
+    .team-score.them { color: var(--text); }
+
+    .period-badge {
+      background: var(--surface-2);
+      padding: 8px 14px;
+      text-align: center;
+    }
+
+    .period-label {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+    }
+
+    .period-num {
+      font-family: var(--font-hero);
+      font-style: italic;
+      font-size: 28px;
+      letter-spacing: -1px;
+    }
+
+    .period-time {
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    /* ==================== Section header ==================== */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 20px 12px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    .section-text {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+    }
+
+    .section-action {
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      color: var(--text-muted);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    /* ==================== Player rows ==================== */
+    .players {
+      padding: 0 8px 20px;
+    }
+
+    .player {
+      background: var(--surface);
+      margin: 6px 12px;
+      padding: 14px 16px;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+      border-left: 3px solid transparent;
+      transition: border-color 150ms ease-out;
+    }
+
+    .player.on-court {
+      border-left-color: var(--accent);
+    }
+
+    .player-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .jersey {
+      font-family: var(--font-hero);
+      font-style: italic;
+      font-size: 32px;
+      line-height: 1;
+      letter-spacing: -1px;
+      color: var(--text);
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .player-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .player-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: -0.2px;
+      color: var(--text);
+    }
+
+    .player-meta {
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .player-totals {
+      display: flex;
+      gap: 14px;
+      align-items: baseline;
+    }
+
+    .total-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .total-num {
+      font-family: var(--font-hero);
+      font-style: italic;
+      font-size: 22px;
+      line-height: 1;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+
+    .total-label {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* ==================== Quick action buttons (mobile-first) ==================== */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+    }
+
+    .qa-btn {
+      background: var(--surface-2);
+      border: none;
+      color: var(--text);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 14px 4px;
+      cursor: pointer;
+      transition: background 100ms ease-out, transform 80ms ease-out;
+      min-height: 48px;  /* touch target */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .qa-btn:hover {
+      background: var(--surface-3);
+    }
+
+    .qa-btn:active {
+      background: var(--accent);
+      color: #fff;
+      transform: scale(0.97);
+    }
+
+    .qa-btn.qa-score {
+      background: var(--surface-3);
+    }
+
+    .qa-btn.qa-error {
+      color: var(--error);
+    }
+
+    .qa-num {
+      font-family: var(--font-hero);
+      font-style: italic;
+      font-size: 18px;
+      line-height: 1;
+      letter-spacing: -0.5px;
+    }
+
+    .qa-label {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    .qa-btn:active .qa-label {
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* ==================== Bench section ==================== */
+    .bench .player {
+      opacity: 0.7;
+      border-left-color: transparent;
+    }
+
+    .bench .player .quick-actions {
+      display: none;
+    }
+
+    .bench .player .player-row {
+      grid-template-columns: auto 1fr auto auto;
+    }
+
+    .swap-btn {
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      color: var(--text-muted);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    /* ==================== Fixed bottom CTA bar ==================== */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border-strong);
+      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 2fr;
+      gap: 8px;
+      z-index: 20;
+    }
+
+    .bottom-bar__btn {
+      background: var(--surface-2);
+      border: none;
+      color: var(--text);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 14px 12px;
+      cursor: pointer;
+      transition: background 150ms ease-out;
+    }
+
+    .bottom-bar__btn:hover {
+      background: var(--surface-3);
+    }
+
+    .bottom-bar__btn--cta {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 12px rgba(255, 77, 0, 0.30);
+    }
+
+    .bottom-bar__btn--cta:hover {
+      background: var(--accent-2);
+    }
+
+    /* ==================== Responsive ==================== */
+    @media (max-width: 600px) {
+      .scoreboard { padding: 16px; }
+      .team-score { font-size: 48px; }
+      .quick-actions { grid-template-columns: repeat(3, 1fr); }
+      .player-totals { gap: 10px; }
+      .total-num { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand-mark"></div>
+      <div class="brand-name">Athlevo Club</div>
+      <div class="role-chip">Antrenör</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn-ghost">↶ Geri Al</button>
+    </div>
+  </header>
+
+  <section class="scoreboard">
+    <div class="match-meta">U14 Bölge Ligi · 8. Hafta</div>
+    <h1 class="match-title">Beşiktaş U14 vs Galatasaray U14</h1>
+    <div class="score-row">
+      <div class="team-side">
+        <div class="team-label">Beşiktaş</div>
+        <div class="team-score us">14</div>
+      </div>
+      <div class="period-badge">
+        <div class="period-label">Periyot</div>
+        <div class="period-num">2</div>
+        <div class="period-time">06:42</div>
+      </div>
+      <div class="team-side team-side--right">
+        <div class="team-label">Galatasaray</div>
+        <div class="team-score them">12</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-header">
+    <div class="section-title">
+      <div class="section-dot"></div>
+      <div class="section-text">Sahada (5)</div>
+    </div>
+    <button class="section-action">Kadroyu Düzenle</button>
+  </div>
+
+  <div class="players">
+    <!-- Player on court -->
+    <div class="player on-court">
+      <div class="player-row">
+        <div class="jersey">7</div>
+        <div class="player-info">
+          <div class="player-name">Mehmet Yılmaz</div>
+          <div class="player-meta">Guard · 12 dk sahada</div>
+        </div>
+        <div class="player-totals">
+          <div class="total-cell"><div class="total-num">8</div><div class="total-label">Sayı</div></div>
+          <div class="total-cell"><div class="total-num">3</div><div class="total-label">Asist</div></div>
+          <div class="total-cell"><div class="total-num">2</div><div class="total-label">Rib</div></div>
+        </div>
+      </div>
+      <div class="quick-actions">
+        <button class="qa-btn qa-score"><span class="qa-num">+2</span><span class="qa-label">Sayı</span></button>
+        <button class="qa-btn qa-score"><span class="qa-num">+3</span><span class="qa-label">Sayı</span></button>
+        <button class="qa-btn"><span class="qa-num">+1</span><span class="qa-label">Asist</span></button>
+        <button class="qa-btn"><span class="qa-num">+1</span><span class="qa-label">Ribaund</span></button>
+        <button class="qa-btn qa-error"><span class="qa-num">+1</span><span class="qa-label">Top Kaybı</span></button>
+        <button class="qa-btn qa-error"><span class="qa-num">+1</span><span class="qa-label">Faul</span></button>
+      </div>
+    </div>
+
+    <div class="player on-court">
+      <div class="player-row">
+        <div class="jersey">11</div>
+        <div class="player-info">
+          <div class="player-name">Ali Demir</div>
+          <div class="player-meta">Forward · 12 dk sahada</div>
+        </div>
+        <div class="player-totals">
+          <div class="total-cell"><div class="total-num">4</div><div class="total-label">Sayı</div></div>
+          <div class="total-cell"><div class="total-num">1</div><div class="total-label">Asist</div></div>
+          <div class="total-cell"><div class="total-num">5</div><div class="total-label">Rib</div></div>
+        </div>
+      </div>
+      <div class="quick-actions">
+        <button class="qa-btn qa-score"><span class="qa-num">+2</span><span class="qa-label">Sayı</span></button>
+        <button class="qa-btn qa-score"><span class="qa-num">+3</span><span class="qa-label">Sayı</span></button>
+        <button class="qa-btn"><span class="qa-num">+1</span><span class="qa-label">Asist</span></button>
+        <button class="qa-btn"><span class="qa-num">+1</span><span class="qa-label">Ribaund</span></button>
+        <button class="qa-btn qa-error"><span class="qa-num">+1</span><span class="qa-label">Top Kaybı</span></button>
+        <button class="qa-btn qa-error"><span class="qa-num">+1</span><span class="qa-label">Faul</span></button>
+      </div>
+    </div>
+
+    <div class="player on-court">
+      <div class="player-row">
+        <div class="jersey">23</div>
+        <div class="player-info">
+          <div class="player-name">Can Şahin</div>
+          <div class="player-meta">Center · 12 dk sahada</div>
+        </div>
+        <div class="player-totals">
+          <div class="total-cell"><div class="total-num">2</div><div class="total-label">Sayı</div></div>
+          <div class="total-cell"><div class="total-num">0</div><div class="total-label">Asist</div></div>
+          <div class="total-cell"><div class="total-num">7</div><div class="total-label">Rib</div></div>
+        </div>
+      </div>
+      <div class="quick-actions">
+        <button class="qa-btn qa-score"><span class="qa-num">+2</span><span class="qa-label">Sayı</span></button>
+        <button class="qa-btn qa-score"><span class="qa-num">+3</span><span class="qa-label">Sayı</span></button>
+        <button class="qa-btn"><span class="qa-num">+1</span><span class="qa-label">Asist</span></button>
+        <button class="qa-btn"><span class="qa-num">+1</span><span class="qa-label">Ribaund</span></button>
+        <button class="qa-btn qa-error"><span class="qa-num">+1</span><span class="qa-label">Top Kaybı</span></button>
+        <button class="qa-btn qa-error"><span class="qa-num">+1</span><span class="qa-label">Faul</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">
+      <div class="section-dot" style="background: var(--text-dim)"></div>
+      <div class="section-text">Yedek Kulübesi (4)</div>
+    </div>
+  </div>
+
+  <div class="players bench">
+    <div class="player">
+      <div class="player-row">
+        <div class="jersey">5</div>
+        <div class="player-info">
+          <div class="player-name">Burak Kaya</div>
+          <div class="player-meta">Guard</div>
+        </div>
+        <div class="player-totals">
+          <div class="total-cell"><div class="total-num">0</div><div class="total-label">Sayı</div></div>
+        </div>
+        <button class="swap-btn">Değiştir</button>
+      </div>
+    </div>
+
+    <div class="player">
+      <div class="player-row">
+        <div class="jersey">9</div>
+        <div class="player-info">
+          <div class="player-name">Emre Aslan</div>
+          <div class="player-meta">Forward</div>
+        </div>
+        <div class="player-totals">
+          <div class="total-cell"><div class="total-num">3</div><div class="total-label">Sayı</div></div>
+        </div>
+        <button class="swap-btn">Değiştir</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-bar">
+    <button class="bottom-bar__btn">Mola</button>
+    <button class="bottom-bar__btn">Periyot Bitir</button>
+    <button class="bottom-bar__btn bottom-bar__btn--cta">Maçı Tamamla →</button>
+  </nav>
+
+</body>
+</html>

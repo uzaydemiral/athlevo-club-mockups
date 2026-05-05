@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mehmet'in Profili · Veli Paneli · Athlevo Club</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#0F0D0C; --surface:#1A1714; --surface-2:#26211D; --surface-3:#322B26;
+      --accent:#FF4D00; --accent-2:#FF6A26;
+      --accent-grad-light:#FF784D; --accent-grad-dark:#AF3200;
+      --text:#F5F5F5; --text-muted:#8A857F; --text-dim:#575451;
+      --border:rgba(255,255,255,0.06); --border-strong:rgba(255,255,255,0.12);
+      --success:#3DDC84; --error:#FF4545; --warning:#FFA94D;
+      --font-display:"Cabinet Grotesk",system-ui,sans-serif;
+      --font-hero:"Instrument Serif",Georgia,serif;
+      --font-body:"DM Sans",system-ui,sans-serif;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html, body { background:var(--bg); color:var(--text); font-family:var(--font-body); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; min-height:100vh; }
+    body { max-width:880px; margin:0 auto; }
+
+    /* Top bar */
+    .topbar {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 20px; background:var(--surface); border-bottom:1px solid var(--border);
+      position:sticky; top:0; z-index:10;
+    }
+    .topbar-left { display:flex; align-items:center; gap:10px; }
+    .brand-mark { width:4px; height:20px; background:var(--accent); }
+    .brand-name { font-family:var(--font-display); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:1.5px; }
+    .role-chip { font-family:var(--font-display); font-weight:800; font-size:9px; text-transform:uppercase; letter-spacing:1.5px; padding:4px 8px; background:var(--surface-2); color:var(--text-muted); }
+    .topbar-actions { display:flex; gap:8px; align-items:center; }
+    .menu-btn {
+      background:transparent; border:none; color:var(--text-muted);
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:1px; padding:8px 12px; cursor:pointer;
+    }
+
+    /* Athlete switcher (multi-child families) */
+    .athlete-switcher {
+      padding:16px 20px 0;
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .athlete-pill {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1.5px;
+      padding:8px 14px;
+      background:var(--surface); color:var(--text-muted);
+      border:1px solid var(--border);
+      cursor:pointer;
+    }
+    .athlete-pill.active {
+      background:var(--surface-2); color:var(--accent);
+      border-color:var(--accent);
+    }
+
+    /* Hero — athlete profile */
+    .hero {
+      padding:24px 20px;
+      background:linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+      position:relative;
+    }
+    .hero::before {
+      content:""; position:absolute; left:0; top:24px; bottom:24px;
+      width:4px; background:var(--accent);
+    }
+    .hero-eyebrow {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:2px; color:var(--text-muted);
+      margin-bottom:8px; padding-left:16px;
+    }
+    .hero-name {
+      font-family:var(--font-display); font-weight:800; font-size:42px;
+      text-transform:uppercase; letter-spacing:-1px; line-height:0.95;
+      padding-left:16px; margin-bottom:8px;
+    }
+    .hero-meta {
+      display:flex; align-items:baseline; gap:14px;
+      font-family:var(--font-body); font-size:13px; color:var(--text-muted);
+      padding-left:16px;
+    }
+    .hero-jersey {
+      font-family:var(--font-hero); font-style:italic; font-size:32px;
+      color:var(--text); letter-spacing:-1px;
+    }
+
+    /* AI summary card */
+    .ai-card {
+      background:var(--surface-2);
+      margin:0 20px;
+      padding:24px 20px;
+      box-shadow:0 8px 20px rgba(0,0,0,0.30);
+      position:relative;
+    }
+    .ai-card::before {
+      content:"AI"; position:absolute; top:0; right:0;
+      background:var(--accent); color:#fff;
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      letter-spacing:1.5px; padding:4px 10px;
+    }
+    .ai-card-eyebrow {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:2px; color:var(--accent);
+      margin-bottom:14px;
+    }
+    .ai-card-text {
+      font-family:var(--font-body); font-size:15px; line-height:1.6;
+      color:var(--text);
+    }
+    .ai-card-text strong { font-weight:700; }
+    .ai-card-text em {
+      font-family:var(--font-hero); font-style:italic;
+      color:var(--accent); font-size:18px; letter-spacing:-0.5px;
+    }
+    .ai-card-meta {
+      margin-top:14px; padding-top:14px;
+      border-top:1px solid var(--border);
+      font-family:var(--font-body); font-size:11px; color:var(--text-muted);
+    }
+
+    /* Section header */
+    .section-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:32px 20px 14px;
+    }
+    .section-title-row { display:flex; align-items:center; gap:8px; }
+    .section-dot { width:6px; height:6px; background:var(--accent); border-radius:50%; }
+    .section-text {
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:2px; color:var(--text-muted);
+    }
+    .section-action {
+      background:transparent; border:none; color:var(--text-muted);
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1px; cursor:pointer; padding:4px 0;
+    }
+    .section-action:hover { color:var(--text); }
+
+    /* Stats grid */
+    .stats-grid {
+      display:grid; grid-template-columns:repeat(2, 1fr); gap:1px;
+      background:var(--border); margin:0 20px;
+    }
+    @media (min-width: 600px) { .stats-grid { grid-template-columns:repeat(4, 1fr); } }
+
+    .stat {
+      background:var(--surface); padding:18px 16px;
+    }
+    .stat-num {
+      font-family:var(--font-hero); font-style:italic; font-size:48px;
+      line-height:0.95; letter-spacing:-1.5px; color:var(--text);
+      margin-bottom:6px;
+    }
+    .stat-label {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+      margin-bottom:4px;
+    }
+    .stat-delta {
+      font-family:var(--font-body); font-size:11px; font-weight:500;
+      color:var(--success);
+    }
+    .stat-delta.neutral { color:var(--text-muted); }
+    .stat-delta.down { color:var(--error); }
+
+    /* Progress chart (mini bar visualization) */
+    .chart-card {
+      background:var(--surface); margin:0 20px; padding:20px;
+    }
+    .chart-title {
+      font-family:var(--font-display); font-weight:800; font-size:12px;
+      text-transform:uppercase; letter-spacing:1px; margin-bottom:18px;
+    }
+    .chart-bars {
+      display:flex; align-items:flex-end; gap:4px; height:120px;
+      border-bottom:1px solid var(--border); padding-bottom:8px;
+    }
+    .chart-bar {
+      flex:1; background:var(--surface-3);
+      position:relative;
+      transition:background 200ms ease-out;
+      min-height:8px;
+    }
+    .chart-bar.highlight {
+      background:linear-gradient(180deg, var(--accent-grad-light) 0%, var(--accent) 100%);
+    }
+    .chart-bar:hover { background:var(--surface-3); }
+    .chart-labels {
+      display:flex; gap:4px; margin-top:10px;
+    }
+    .chart-label {
+      flex:1; text-align:center;
+      font-family:var(--font-body); font-size:10px; color:var(--text-muted);
+      letter-spacing:0.5px;
+    }
+    .chart-summary {
+      margin-top:16px; padding-top:16px;
+      border-top:1px solid var(--border);
+      display:flex; justify-content:space-between; align-items:baseline;
+      font-family:var(--font-body); font-size:12px; color:var(--text-muted);
+    }
+    .chart-summary strong {
+      font-family:var(--font-hero); font-style:italic; font-size:24px;
+      color:var(--success); letter-spacing:-0.5px;
+    }
+
+    /* Reports list */
+    .reports-list { margin:0 20px; }
+    .report-row {
+      background:var(--surface);
+      padding:16px 18px;
+      display:grid; grid-template-columns:1fr auto; gap:14px;
+      border-bottom:1px solid var(--border);
+      align-items:center;
+      cursor:pointer;
+      transition:background 150ms ease-out;
+    }
+    .report-row:hover { background:var(--surface-2); }
+    .report-row:last-child { border-bottom:none; }
+
+    .report-meta {
+      display:flex; flex-direction:column; gap:4px;
+    }
+    .report-date {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+    }
+    .report-title-text {
+      font-family:var(--font-display); font-weight:800; font-size:14px;
+      text-transform:uppercase; letter-spacing:-0.2px;
+    }
+    .report-result-row {
+      font-family:var(--font-body); font-size:12px; color:var(--text-muted);
+      margin-top:4px;
+    }
+    .report-result-row .num {
+      font-family:var(--font-hero); font-style:italic; font-size:14px;
+      color:var(--text); letter-spacing:-0.3px; margin:0 2px;
+    }
+
+    .report-arrow {
+      font-family:var(--font-display); font-weight:800;
+      color:var(--text-muted); font-size:18px;
+    }
+
+    /* Upcoming events compact */
+    .upcoming {
+      margin:0 20px;
+      background:var(--surface);
+      padding:18px;
+    }
+    .upcoming-row {
+      display:flex; align-items:center; gap:14px;
+      padding:10px 0;
+      border-bottom:1px solid var(--border);
+    }
+    .upcoming-row:last-child { border-bottom:none; }
+    .upcoming-date {
+      flex-shrink:0; min-width:48px; text-align:center;
+    }
+    .upcoming-day {
+      font-family:var(--font-hero); font-style:italic; font-size:24px;
+      line-height:1; color:var(--text); letter-spacing:-0.5px;
+    }
+    .upcoming-month {
+      font-family:var(--font-display); font-weight:800; font-size:9px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+      margin-top:2px;
+    }
+    .upcoming-text { flex:1; }
+    .upcoming-title {
+      font-family:var(--font-display); font-weight:800; font-size:12px;
+      text-transform:uppercase; letter-spacing:0.5px;
+    }
+    .upcoming-meta {
+      font-family:var(--font-body); font-size:11px; color:var(--text-muted);
+      margin-top:2px;
+    }
+    .upcoming-tag {
+      font-family:var(--font-display); font-weight:800; font-size:9px;
+      text-transform:uppercase; letter-spacing:1.5px;
+      padding:4px 8px;
+    }
+    .upcoming-tag.match { background:rgba(255,77,0,0.10); color:var(--accent); }
+    .upcoming-tag.training { background:rgba(255,255,255,0.06); color:var(--text-muted); }
+
+    /* Footer */
+    .footer {
+      margin:48px 20px 24px;
+      padding-top:20px;
+      border-top:1px solid var(--border);
+      display:flex; justify-content:space-between; align-items:center;
+      flex-wrap:wrap; gap:12px;
+    }
+    .footer-club {
+      display:flex; align-items:center; gap:10px;
+    }
+    .footer-club-logo {
+      width:32px; height:32px; background:var(--surface-2);
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      color:var(--accent);
+    }
+    .footer-club-name {
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:1px;
+    }
+    .powered {
+      font-family:var(--font-body); font-size:11px; color:var(--text-dim);
+    }
+    .powered strong { color:var(--text-muted); font-weight:500; }
+
+    @media (max-width: 600px) {
+      .hero-name { font-size:32px; }
+      .stat-num { font-size:36px; }
+      .ai-card-text { font-size:14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand-mark"></div>
+      <div class="brand-name">Athlevo Club</div>
+      <div class="role-chip">Veli</div>
+    </div>
+    <button class="menu-btn">Menü</button>
+  </header>
+
+  <div class="athlete-switcher">
+    <button class="athlete-pill active">Mehmet · #7</button>
+    <button class="athlete-pill">Ayşe · #14</button>
+  </div>
+
+  <section class="hero">
+    <div class="hero-eyebrow">Sporcu Profili · Sezon 2025-26</div>
+    <h1 class="hero-name">Mehmet Yılmaz</h1>
+    <div class="hero-meta">
+      <span class="hero-jersey">7</span>
+      <span>Guard · U14 A Takım · Beşiktaş Altyapı</span>
+    </div>
+  </section>
+
+  <article class="ai-card">
+    <div class="ai-card-eyebrow">Sezon Özeti · AI ile derlendi</div>
+    <p class="ai-card-text">
+      Mehmet bu sezon hızlı bir gelişim sergiliyor. <strong>En güçlü tarafı</strong> oyun kurmadaki sezgisi — <em>+25%</em> asist artışı yaş grubunda dikkat çekici. Hücumda <em>%48</em> şut yüzdesi ile sezon ortalamasının üstünde.
+    </p>
+    <p class="ai-card-text" style="margin-top:10px;">
+      <strong>Çalışılması gereken alan</strong> baskı altında karar verme — top kayıpları son 4 maçta hafif arttı. Antrenmanda buna eğiliniyor.
+    </p>
+    <div class="ai-card-meta">Son güncelleme: 14 May 2026 · 8 maç verisi üzerinden</div>
+  </article>
+
+  <div class="section-header">
+    <div class="section-title-row">
+      <div class="section-dot"></div>
+      <div class="section-text">Sezon İstatistikleri</div>
+    </div>
+    <button class="section-action">Detay →</button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-num">9.4</div>
+      <div class="stat-label">Sayı / Maç</div>
+      <div class="stat-delta">+18% sezon</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3.1</div>
+      <div class="stat-label">Asist / Maç</div>
+      <div class="stat-delta">+25% sezon</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5.2</div>
+      <div class="stat-label">Ribaund / Maç</div>
+      <div class="stat-delta">+12% sezon</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">48%</div>
+      <div class="stat-label">Şut Yüzdesi</div>
+      <div class="stat-delta">+6 pp</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title-row">
+      <div class="section-dot"></div>
+      <div class="section-text">Maç Bazlı Gelişim</div>
+    </div>
+    <button class="section-action">Sayı / Asist / Rib →</button>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">Sayı / Maç (Son 8 Maç)</div>
+    <div class="chart-bars">
+      <div class="chart-bar" style="height:30%;" title="Maç 1: 6 sayı"></div>
+      <div class="chart-bar" style="height:42%;" title="Maç 2: 7 sayı"></div>
+      <div class="chart-bar" style="height:38%;" title="Maç 3: 6 sayı"></div>
+      <div class="chart-bar" style="height:55%;" title="Maç 4: 9 sayı"></div>
+      <div class="chart-bar" style="height:60%;" title="Maç 5: 10 sayı"></div>
+      <div class="chart-bar" style="height:48%;" title="Maç 6: 8 sayı"></div>
+      <div class="chart-bar" style="height:65%;" title="Maç 7: 11 sayı"></div>
+      <div class="chart-bar highlight" style="height:78%;" title="Maç 8 (bugün): 12 sayı"></div>
+    </div>
+    <div class="chart-labels">
+      <div class="chart-label">M1</div>
+      <div class="chart-label">M2</div>
+      <div class="chart-label">M3</div>
+      <div class="chart-label">M4</div>
+      <div class="chart-label">M5</div>
+      <div class="chart-label">M6</div>
+      <div class="chart-label">M7</div>
+      <div class="chart-label">M8</div>
+    </div>
+    <div class="chart-summary">
+      <span>Sezon ortalama:</span>
+      <strong>9.4 sayı</strong>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title-row">
+      <div class="section-dot"></div>
+      <div class="section-text">Maç Raporları</div>
+    </div>
+    <button class="section-action">Tümü (8) →</button>
+  </div>
+
+  <div class="reports-list">
+    <a class="report-row">
+      <div class="report-meta">
+        <div class="report-date">14 May 2026 · Cumartesi</div>
+        <div class="report-title-text">vs Galatasaray U14</div>
+        <div class="report-result-row">
+          Galibiyet 68-62 ·
+          <span class="num">12</span>sayı ·
+          <span class="num">4</span>asist ·
+          <span class="num">6</span>ribaund
+        </div>
+      </div>
+      <div class="report-arrow">→</div>
+    </a>
+    <a class="report-row">
+      <div class="report-meta">
+        <div class="report-date">7 May 2026 · Cumartesi</div>
+        <div class="report-title-text">vs Fenerbahçe U14</div>
+        <div class="report-result-row">
+          Galibiyet 71-65 ·
+          <span class="num">11</span>sayı ·
+          <span class="num">3</span>asist ·
+          <span class="num">5</span>ribaund
+        </div>
+      </div>
+      <div class="report-arrow">→</div>
+    </a>
+    <a class="report-row">
+      <div class="report-meta">
+        <div class="report-date">30 Nis 2026 · Cumartesi</div>
+        <div class="report-title-text">vs Anadolu Efes U14</div>
+        <div class="report-result-row">
+          Mağlubiyet 58-64 ·
+          <span class="num">8</span>sayı ·
+          <span class="num">2</span>asist ·
+          <span class="num">4</span>ribaund
+        </div>
+      </div>
+      <div class="report-arrow">→</div>
+    </a>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title-row">
+      <div class="section-dot"></div>
+      <div class="section-text">Yaklaşan</div>
+    </div>
+  </div>
+
+  <div class="upcoming">
+    <div class="upcoming-row">
+      <div class="upcoming-date">
+        <div class="upcoming-day">17</div>
+        <div class="upcoming-month">May</div>
+      </div>
+      <div class="upcoming-text">
+        <div class="upcoming-title">Antrenman</div>
+        <div class="upcoming-meta">18:00-20:00 · Beşiktaş Akatlar</div>
+      </div>
+      <div class="upcoming-tag training">Antrenman</div>
+    </div>
+    <div class="upcoming-row">
+      <div class="upcoming-date">
+        <div class="upcoming-day">21</div>
+        <div class="upcoming-month">May</div>
+      </div>
+      <div class="upcoming-text">
+        <div class="upcoming-title">vs Karşıyaka U14</div>
+        <div class="upcoming-meta">14:30 · Deplasman · İzmir</div>
+      </div>
+      <div class="upcoming-tag match">Maç</div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-club">
+      <div class="footer-club-logo">BJK</div>
+      <div>
+        <div class="footer-club-name">Beşiktaş Spor Kulübü Altyapı</div>
+      </div>
+    </div>
+    <div class="powered"><strong>Athlevo Club</strong> · athlevo.club</div>
+  </footer>
+
+</body>
+</html>

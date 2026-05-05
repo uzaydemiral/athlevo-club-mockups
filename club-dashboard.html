@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Komuta Merkezi · Yönetici Paneli · Athlevo Club</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#0F0D0C; --surface:#1A1714; --surface-2:#26211D; --surface-3:#322B26;
+      --accent:#FF4D00; --accent-2:#FF6A26;
+      --accent-grad-light:#FF784D; --accent-grad-dark:#AF3200;
+      --text:#F5F5F5; --text-muted:#8A857F; --text-dim:#575451;
+      --border:rgba(255,255,255,0.06); --border-strong:rgba(255,255,255,0.12);
+      --success:#3DDC84; --error:#FF4545; --warning:#FFA94D;
+      --font-display:"Cabinet Grotesk",system-ui,sans-serif;
+      --font-hero:"Instrument Serif",Georgia,serif;
+      --font-body:"DM Sans",system-ui,sans-serif;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html, body { background:var(--bg); color:var(--text); font-family:var(--font-body); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; min-height:100vh; }
+
+    /* App shell — sidebar + main */
+    .app {
+      display:grid; grid-template-columns:240px 1fr; min-height:100vh;
+    }
+    @media (max-width: 900px) {
+      .app { grid-template-columns:1fr; }
+      .sidebar { display:none; }
+    }
+
+    /* ====================== Sidebar ====================== */
+    .sidebar {
+      background:var(--surface);
+      border-right:1px solid var(--border);
+      padding:20px 0; display:flex; flex-direction:column; gap:24px;
+    }
+    .sb-brand {
+      display:flex; align-items:center; gap:10px;
+      padding:0 20px; padding-bottom:20px;
+      border-bottom:1px solid var(--border);
+    }
+    .brand-mark { width:4px; height:20px; background:var(--accent); }
+    .brand-name {
+      font-family:var(--font-display); font-weight:800; font-size:13px;
+      text-transform:uppercase; letter-spacing:1.5px;
+    }
+    .brand-sub {
+      font-family:var(--font-body); font-size:10px; color:var(--text-muted);
+      text-transform:uppercase; letter-spacing:1.5px;
+      padding:0 20px; margin-top:-12px; margin-bottom:8px;
+    }
+
+    .nav { display:flex; flex-direction:column; gap:2px; padding:0 12px; }
+    .nav-section-title {
+      font-family:var(--font-display); font-weight:800; font-size:9px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-dim);
+      padding:6px 12px 4px;
+    }
+    .nav-item {
+      display:flex; align-items:center; gap:12px;
+      padding:10px 12px;
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:1px;
+      color:var(--text-muted); cursor:pointer;
+      transition:color 150ms, background 150ms;
+      text-decoration:none;
+    }
+    .nav-item:hover { color:var(--text); background:var(--surface-2); }
+    .nav-item.active { color:var(--text); position:relative; background:var(--surface-2); }
+    .nav-item.active::before {
+      content:""; position:absolute; left:0; top:6px; bottom:6px; width:3px;
+      background:var(--accent);
+    }
+    .nav-icon {
+      width:14px; height:14px; flex-shrink:0;
+      background:currentColor;
+      mask-position:center;
+      -webkit-mask-position:center;
+      opacity:0.6;
+    }
+    .nav-item.active .nav-icon { opacity:1; }
+
+    .sidebar-footer {
+      margin-top:auto; padding:20px;
+      border-top:1px solid var(--border);
+    }
+    .user-pill {
+      display:flex; align-items:center; gap:10px;
+    }
+    .user-avatar {
+      width:32px; height:32px; background:var(--surface-2);
+      border-radius:9999px;
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--font-display); font-weight:800; font-size:12px;
+      color:var(--accent);
+    }
+    .user-info { display:flex; flex-direction:column; gap:1px; }
+    .user-name { font-family:var(--font-body); font-size:13px; color:var(--text); font-weight:500; }
+    .user-role { font-family:var(--font-display); font-weight:800; font-size:9px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); }
+
+    /* ====================== Main content ====================== */
+    .main { padding:0 0 32px; }
+
+    /* Mobile top bar */
+    .topbar-mobile {
+      display:none;
+      align-items:center; justify-content:space-between;
+      padding:14px 20px; background:var(--surface);
+      border-bottom:1px solid var(--border);
+    }
+    @media (max-width: 900px) { .topbar-mobile { display:flex; } }
+
+    /* Page header */
+    .page-header {
+      padding:32px 32px 20px;
+      border-bottom:1px solid var(--border);
+    }
+    .page-eyebrow {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:2px; color:var(--accent);
+      margin-bottom:8px;
+    }
+    .page-title {
+      font-family:var(--font-display); font-weight:800; font-size:36px;
+      text-transform:uppercase; letter-spacing:-0.8px; line-height:0.95;
+      margin-bottom:6px;
+    }
+    .page-sub {
+      font-family:var(--font-body); font-size:14px; color:var(--text-muted);
+    }
+
+    /* KPI grid */
+    .kpi-grid {
+      display:grid; grid-template-columns:repeat(4, 1fr); gap:1px;
+      background:var(--border); margin:24px 32px;
+    }
+    @media (max-width: 700px) { .kpi-grid { grid-template-columns:repeat(2, 1fr); margin:16px; } }
+
+    .kpi {
+      background:var(--surface); padding:18px 16px;
+    }
+    .kpi-num {
+      font-family:var(--font-hero); font-style:italic; font-size:48px;
+      line-height:0.95; letter-spacing:-1.5px; color:var(--text);
+      margin-bottom:6px;
+    }
+    .kpi-label {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+      margin-bottom:4px;
+    }
+    .kpi-delta {
+      font-family:var(--font-body); font-size:11px; font-weight:500;
+      color:var(--success);
+    }
+    .kpi-delta.neutral { color:var(--text-muted); }
+    .kpi-delta.warning { color:var(--warning); }
+
+    /* Section header */
+    .section-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:32px 32px 14px;
+    }
+    @media (max-width: 700px) { .section-header { padding:24px 16px 12px; } }
+
+    .section-title-row { display:flex; align-items:center; gap:8px; }
+    .section-dot { width:6px; height:6px; background:var(--accent); border-radius:50%; }
+    .section-text {
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:2px; color:var(--text-muted);
+    }
+    .section-action {
+      background:transparent; border:none; color:var(--text-muted);
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1px; cursor:pointer;
+    }
+    .section-action:hover { color:var(--text); }
+
+    /* AI Insight cards (3-column grid) */
+    .insights {
+      display:grid; grid-template-columns:repeat(3, 1fr); gap:1px;
+      background:var(--border); margin:0 32px;
+    }
+    @media (max-width: 1100px) { .insights { grid-template-columns:1fr; } }
+    @media (max-width: 700px) { .insights { margin:0 16px; } }
+
+    .insight {
+      background:var(--surface-2); padding:20px; position:relative;
+      min-height:240px;
+      display:flex; flex-direction:column; gap:12px;
+    }
+    .insight::before {
+      content:"AI"; position:absolute; top:0; right:0;
+      background:var(--accent); color:#fff;
+      font-family:var(--font-display); font-weight:800; font-size:9px;
+      letter-spacing:1.5px; padding:3px 8px;
+    }
+
+    .insight-eyebrow {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1.5px;
+    }
+    .insight-eyebrow.up { color:var(--success); }
+    .insight-eyebrow.warn { color:var(--warning); }
+    .insight-eyebrow.trend { color:var(--accent); }
+
+    .insight-title {
+      font-family:var(--font-display); font-weight:800; font-size:14px;
+      text-transform:uppercase; letter-spacing:-0.2px;
+      line-height:1.2;
+    }
+
+    .insight-list {
+      display:flex; flex-direction:column; gap:10px;
+      list-style:none; flex:1;
+    }
+    .insight-row {
+      display:flex; justify-content:space-between; align-items:baseline;
+      padding-bottom:8px; border-bottom:1px solid var(--border);
+    }
+    .insight-row:last-child { border-bottom:none; padding-bottom:0; }
+    .insight-name {
+      font-family:var(--font-body); font-size:13px; color:var(--text);
+      font-weight:500;
+    }
+    .insight-meta {
+      font-family:var(--font-body); font-size:11px; color:var(--text-muted);
+      display:block; margin-top:2px;
+    }
+    .insight-value {
+      font-family:var(--font-hero); font-style:italic; font-size:18px;
+      letter-spacing:-0.3px;
+    }
+    .insight-value.up { color:var(--success); }
+    .insight-value.down { color:var(--error); }
+    .insight-value.warn { color:var(--warning); }
+
+    .insight-action {
+      margin-top:auto; padding-top:8px;
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1px; color:var(--text-muted);
+      background:transparent; border:none; cursor:pointer;
+      align-self:flex-start;
+    }
+    .insight-action:hover { color:var(--accent); }
+
+    /* Recent matches */
+    .matches-list { margin:0 32px; }
+    @media (max-width: 700px) { .matches-list { margin:0 16px; } }
+
+    .match-row {
+      background:var(--surface);
+      padding:16px 18px;
+      display:grid; grid-template-columns:auto 1fr auto auto; gap:14px;
+      border-bottom:1px solid var(--border);
+      align-items:center;
+    }
+    .match-row:hover { background:var(--surface-2); cursor:pointer; }
+
+    .match-date {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+      min-width:64px;
+    }
+    .match-info {
+      display:flex; flex-direction:column; gap:3px;
+    }
+    .match-team {
+      font-family:var(--font-display); font-weight:800; font-size:13px;
+      text-transform:uppercase; letter-spacing:-0.2px;
+    }
+    .match-vs {
+      font-family:var(--font-body); font-size:12px; color:var(--text-muted);
+    }
+    .match-score {
+      font-family:var(--font-hero); font-style:italic; font-size:24px;
+      letter-spacing:-0.5px;
+      min-width:60px; text-align:right;
+    }
+    .match-score.win { color:var(--success); }
+    .match-score.loss { color:var(--error); }
+    .match-status {
+      font-family:var(--font-display); font-weight:800; font-size:9px;
+      text-transform:uppercase; letter-spacing:1.5px;
+      padding:4px 8px;
+    }
+    .match-status.sent { background:rgba(61,220,132,0.10); color:var(--success); }
+    .match-status.pending { background:rgba(255,169,77,0.10); color:var(--warning); }
+
+    @media (max-width: 700px) {
+      .match-row { grid-template-columns:1fr auto; gap:8px; }
+      .match-date { grid-column:1; }
+      .match-status { grid-column:2; }
+      .match-info { grid-column:1; }
+      .match-score { grid-column:2; text-align:right; }
+    }
+
+    /* Two-column bottom row */
+    .two-col {
+      display:grid; grid-template-columns:1fr 1fr; gap:1px;
+      background:var(--border); margin:0 32px 24px;
+    }
+    @media (max-width: 900px) { .two-col { grid-template-columns:1fr; margin:0 16px 24px; } }
+
+    .col-card {
+      background:var(--surface); padding:20px;
+    }
+    .col-title {
+      font-family:var(--font-display); font-weight:800; font-size:12px;
+      text-transform:uppercase; letter-spacing:1px;
+      margin-bottom:14px;
+    }
+    .coach-row {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:10px 0; border-bottom:1px solid var(--border);
+    }
+    .coach-row:last-child { border-bottom:none; }
+    .coach-name {
+      font-family:var(--font-body); font-size:13px; color:var(--text); font-weight:500;
+    }
+    .coach-team {
+      font-family:var(--font-display); font-weight:800; font-size:9px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+    }
+    .coach-stat {
+      font-family:var(--font-hero); font-style:italic; font-size:18px;
+      color:var(--text); letter-spacing:-0.3px;
+    }
+    .coach-stat-label {
+      font-family:var(--font-display); font-weight:800; font-size:9px;
+      text-transform:uppercase; letter-spacing:1px; color:var(--text-muted);
+      margin-left:4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- ====================== Sidebar ====================== -->
+    <aside class="sidebar">
+      <div class="sb-brand">
+        <div class="brand-mark"></div>
+        <div>
+          <div class="brand-name">Athlevo Club</div>
+        </div>
+      </div>
+      <div class="brand-sub">Beşiktaş Altyapı</div>
+
+      <nav class="nav">
+        <div class="nav-section-title">Genel</div>
+        <a class="nav-item active">Komuta Merkezi</a>
+        <a class="nav-item">Maçlar</a>
+        <a class="nav-item">Raporlar</a>
+
+        <div class="nav-section-title" style="margin-top:12px;">Yönetim</div>
+        <a class="nav-item">Takımlar</a>
+        <a class="nav-item">Sporcular</a>
+        <a class="nav-item">Antrenörler</a>
+        <a class="nav-item">Veliler</a>
+
+        <div class="nav-section-title" style="margin-top:12px;">Sistem</div>
+        <a class="nav-item">Ayarlar</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-pill">
+          <div class="user-avatar">UD</div>
+          <div class="user-info">
+            <div class="user-name">Uzay Demiral</div>
+            <div class="user-role">Yönetici</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ====================== Main ====================== -->
+    <main class="main">
+
+      <header class="topbar-mobile">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="brand-mark"></div>
+          <div class="brand-name">Athlevo Club</div>
+        </div>
+        <button style="background:transparent; border:none; color:var(--text-muted); font-family:var(--font-display); font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:1px; cursor:pointer;">Menü</button>
+      </header>
+
+      <div class="page-header">
+        <div class="page-eyebrow">Sezon 2025-26 · Hafta 8</div>
+        <h1 class="page-title">Komuta Merkezi</h1>
+        <p class="page-sub">Beşiktaş Spor Kulübü Altyapı · Bu hafta neler oldu, dikkat etmeniz gerekenler</p>
+      </div>
+
+      <!-- ============ KPIs ============ -->
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-num">147</div>
+          <div class="kpi-label">Aktif Sporcu</div>
+          <div class="kpi-delta">+8 bu ay</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-num">6</div>
+          <div class="kpi-label">Aktif Takım</div>
+          <div class="kpi-delta neutral">U10—U18</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-num">87%</div>
+          <div class="kpi-label">Bu Hafta Yoklama</div>
+          <div class="kpi-delta">+4 pp</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-num">23</div>
+          <div class="kpi-label">Bu Ay Maç</div>
+          <div class="kpi-delta">14 galibiyet</div>
+        </div>
+      </div>
+
+      <!-- ============ AI Insights ============ -->
+      <div class="section-header">
+        <div class="section-title-row">
+          <div class="section-dot"></div>
+          <div class="section-text">Bu Hafta Önemli</div>
+        </div>
+        <button class="section-action">Tümü →</button>
+      </div>
+
+      <div class="insights">
+
+        <article class="insight">
+          <div class="insight-eyebrow up">↑ En Çok Gelişen</div>
+          <h3 class="insight-title">Sezon Sıçraması Yapan 3 Sporcu</h3>
+          <ul class="insight-list">
+            <li class="insight-row">
+              <div>
+                <span class="insight-name">Mehmet Yılmaz</span>
+                <span class="insight-meta">U14 · Guard</span>
+              </div>
+              <span class="insight-value up">+25%</span>
+            </li>
+            <li class="insight-row">
+              <div>
+                <span class="insight-name">Can Şahin</span>
+                <span class="insight-meta">U14 · Center</span>
+              </div>
+              <span class="insight-value up">+22%</span>
+            </li>
+            <li class="insight-row">
+              <div>
+                <span class="insight-name">Elif Aydın</span>
+                <span class="insight-meta">U16 · Forward</span>
+              </div>
+              <span class="insight-value up">+18%</span>
+            </li>
+          </ul>
+          <button class="insight-action">Velilere paylaş →</button>
+        </article>
+
+        <article class="insight">
+          <div class="insight-eyebrow warn">⚠ Dikkat Gereken</div>
+          <h3 class="insight-title">Risk Sinyali Veren 2 Sporcu</h3>
+          <ul class="insight-list">
+            <li class="insight-row">
+              <div>
+                <span class="insight-name">Tolga Erdoğan</span>
+                <span class="insight-meta">3 antrenmandan 2'sini kaçırdı</span>
+              </div>
+              <span class="insight-value warn">78%</span>
+            </li>
+            <li class="insight-row">
+              <div>
+                <span class="insight-name">Deniz Koç</span>
+                <span class="insight-meta">Performans son 4 maçta düşüş</span>
+              </div>
+              <span class="insight-value warn">62%</span>
+            </li>
+          </ul>
+          <button class="insight-action">Aileyi ara →</button>
+        </article>
+
+        <article class="insight">
+          <div class="insight-eyebrow trend">→ Takım Trendleri</div>
+          <h3 class="insight-title">Son 4 Maçta En İyi U14</h3>
+          <ul class="insight-list">
+            <li class="insight-row">
+              <div>
+                <span class="insight-name">U14 A</span>
+                <span class="insight-meta">4G 0M · sezon en iyisi</span>
+              </div>
+              <span class="insight-value up">+18%</span>
+            </li>
+            <li class="insight-row">
+              <div>
+                <span class="insight-name">U16 A</span>
+                <span class="insight-meta">3G 1M · stabil</span>
+              </div>
+              <span class="insight-value">+5%</span>
+            </li>
+            <li class="insight-row">
+              <div>
+                <span class="insight-name">U12 B</span>
+                <span class="insight-meta">1G 3M · ilgilenmek lazım</span>
+              </div>
+              <span class="insight-value down">-12%</span>
+            </li>
+          </ul>
+          <button class="insight-action">Detay grafik →</button>
+        </article>
+
+      </div>
+
+      <!-- ============ Recent matches ============ -->
+      <div class="section-header">
+        <div class="section-title-row">
+          <div class="section-dot"></div>
+          <div class="section-text">Son Maçlar</div>
+        </div>
+        <button class="section-action">Tümü →</button>
+      </div>
+
+      <div class="matches-list">
+        <a class="match-row">
+          <div class="match-date">14 May</div>
+          <div class="match-info">
+            <div class="match-team">U14 A Takım</div>
+            <div class="match-vs">vs Galatasaray U14</div>
+          </div>
+          <div class="match-score win">68—62</div>
+          <div class="match-status sent">Raporlar Gönderildi</div>
+        </a>
+        <a class="match-row">
+          <div class="match-date">14 May</div>
+          <div class="match-info">
+            <div class="match-team">U16 A Takım</div>
+            <div class="match-vs">vs Fenerbahçe U16</div>
+          </div>
+          <div class="match-score win">75—68</div>
+          <div class="match-status sent">Raporlar Gönderildi</div>
+        </a>
+        <a class="match-row">
+          <div class="match-date">13 May</div>
+          <div class="match-info">
+            <div class="match-team">U12 B Takım</div>
+            <div class="match-vs">vs Anadolu Efes U12</div>
+          </div>
+          <div class="match-score loss">42—51</div>
+          <div class="match-status pending">5 / 10 onaylı</div>
+        </a>
+        <a class="match-row">
+          <div class="match-date">10 May</div>
+          <div class="match-info">
+            <div class="match-team">U18 A Takım</div>
+            <div class="match-vs">vs Karşıyaka U18</div>
+          </div>
+          <div class="match-score win">81—74</div>
+          <div class="match-status sent">Raporlar Gönderildi</div>
+        </a>
+      </div>
+
+      <!-- ============ Two columns: Coaches + Calendar ============ -->
+      <div class="section-header">
+        <div class="section-title-row">
+          <div class="section-dot"></div>
+          <div class="section-text">Antrenör Aktivitesi · Bu Hafta</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+
+        <div class="col-card">
+          <div class="col-title">Antrenörler</div>
+          <div class="coach-row">
+            <div>
+              <div class="coach-name">Mehmet Şentürk</div>
+              <div class="coach-team">U14 A · Baş Antrenör</div>
+            </div>
+            <div>
+              <span class="coach-stat">12</span><span class="coach-stat-label">rapor</span>
+            </div>
+          </div>
+          <div class="coach-row">
+            <div>
+              <div class="coach-name">Ayşe Kaya</div>
+              <div class="coach-team">U16 A · Baş Antrenör</div>
+            </div>
+            <div>
+              <span class="coach-stat">10</span><span class="coach-stat-label">rapor</span>
+            </div>
+          </div>
+          <div class="coach-row">
+            <div>
+              <div class="coach-name">Burak Demir</div>
+              <div class="coach-team">U12 B · Baş Antrenör</div>
+            </div>
+            <div>
+              <span class="coach-stat">5</span><span class="coach-stat-label">rapor</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-card">
+          <div class="col-title">Yaklaşan Maçlar</div>
+          <div class="coach-row">
+            <div>
+              <div class="coach-name">U14 A · vs Karşıyaka</div>
+              <div class="coach-team">21 May · Cumartesi · İzmir</div>
+            </div>
+            <div>
+              <span class="coach-stat">7</span><span class="coach-stat-label">gün</span>
+            </div>
+          </div>
+          <div class="coach-row">
+            <div>
+              <div class="coach-name">U16 A · vs Tofaş</div>
+              <div class="coach-team">21 May · Cumartesi · Bursa</div>
+            </div>
+            <div>
+              <span class="coach-stat">7</span><span class="coach-stat-label">gün</span>
+            </div>
+          </div>
+          <div class="coach-row">
+            <div>
+              <div class="coach-name">U12 B · vs Galatasaray</div>
+              <div class="coach-team">28 May · Cumartesi · İstanbul</div>
+            </div>
+            <div>
+              <span class="coach-stat">14</span><span class="coach-stat-label">gün</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+</body>
+</html>

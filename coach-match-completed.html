@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Maç Tamamlandı · Antrenör Paneli</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#0F0D0C; --surface:#1A1714; --surface-2:#26211D; --surface-3:#322B26;
+      --accent:#FF4D00; --accent-2:#FF6A26;
+      --text:#F5F5F5; --text-muted:#8A857F; --text-dim:#575451;
+      --border:rgba(255,255,255,0.06); --border-strong:rgba(255,255,255,0.12);
+      --success:#3DDC84; --error:#FF4545; --warning:#FFA94D;
+      --font-display:"Cabinet Grotesk",system-ui,sans-serif;
+      --font-hero:"Instrument Serif",Georgia,serif;
+      --font-body:"DM Sans",system-ui,sans-serif;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html, body { background:var(--bg); color:var(--text); font-family:var(--font-body); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; min-height:100vh; padding-bottom:96px; }
+    body { max-width:980px; margin:0 auto; }
+
+    /* Top bar (compact) */
+    .topbar {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 20px; background:var(--surface); border-bottom:1px solid var(--border);
+      position:sticky; top:0; z-index:10;
+    }
+    .topbar-left { display:flex; align-items:center; gap:10px; }
+    .brand-mark { width:4px; height:20px; background:var(--accent); }
+    .brand-name { font-family:var(--font-display); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:1.5px; }
+    .role-chip { font-family:var(--font-display); font-weight:800; font-size:9px; text-transform:uppercase; letter-spacing:1.5px; padding:4px 8px; background:var(--surface-2); color:var(--text-muted); }
+    .btn-ghost { background:transparent; border:none; color:var(--text-muted); font-family:var(--font-display); font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:1px; padding:8px 12px; cursor:pointer; }
+
+    /* Hero — match completed */
+    .hero {
+      background:var(--surface);
+      padding:24px 20px;
+      border-bottom:1px solid var(--border);
+    }
+    .hero-eyebrow {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:2px; color:var(--success);
+      margin-bottom:8px; display:flex; align-items:center; gap:8px;
+    }
+    .hero-eyebrow::before {
+      content:""; width:6px; height:6px; background:var(--success); border-radius:50%;
+    }
+    .match-title {
+      font-family:var(--font-display); font-weight:800; font-size:20px;
+      text-transform:uppercase; letter-spacing:-0.3px; line-height:1.2;
+      margin-bottom:16px;
+    }
+    .final-score {
+      display:flex; align-items:baseline; gap:16px;
+      font-family:var(--font-hero); font-style:italic;
+      letter-spacing:-2px;
+    }
+    .final-score__us { font-size:72px; color:var(--accent); line-height:0.95; }
+    .final-score__sep { font-size:32px; color:var(--text-dim); }
+    .final-score__them { font-size:72px; color:var(--text); line-height:0.95; }
+    .final-score__result {
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:2px; color:var(--success);
+      margin-left:auto; padding:6px 12px; background:rgba(61,220,132,0.10);
+    }
+
+    /* AI status banner */
+    .ai-banner {
+      background:var(--surface-2); padding:18px 20px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid var(--border); gap:16px; flex-wrap:wrap;
+    }
+    .ai-banner__left { display:flex; align-items:center; gap:14px; }
+    .ai-banner__icon {
+      width:40px; height:40px; background:var(--accent);
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--font-hero); font-style:italic; font-size:24px; color:#fff;
+      flex-shrink:0;
+    }
+    .ai-banner__text { font-family:var(--font-body); font-size:14px; color:var(--text); line-height:1.4; }
+    .ai-banner__text strong { font-weight:700; }
+    .ai-banner__text small { display:block; color:var(--text-muted); font-size:12px; margin-top:2px; }
+
+    .btn-secondary {
+      background:transparent; border:1px solid var(--border-strong); color:var(--text);
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:1px;
+      padding:10px 14px; cursor:pointer; transition:border-color 150ms;
+    }
+    .btn-secondary:hover { border-color:var(--accent); }
+
+    /* Section header */
+    .section-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:24px 20px 12px;
+    }
+    .section-text {
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:2px; color:var(--text-muted);
+    }
+    .section-counter {
+      font-family:var(--font-hero); font-style:italic; font-size:14px;
+      color:var(--text); letter-spacing:-0.3px;
+    }
+
+    /* Report cards */
+    .reports {
+      display:grid; gap:1px; background:var(--border);
+      margin:0 12px;
+    }
+    .report-card {
+      background:var(--surface);
+      padding:18px 16px;
+      display:grid; grid-template-columns:auto 1fr auto; gap:14px;
+      align-items:start;
+    }
+    .report-card.approved { background:var(--surface); }
+    .report-card.pending::before {
+      content:"";
+      position:absolute;
+    }
+
+    .report-jersey {
+      font-family:var(--font-hero); font-style:italic; font-size:32px;
+      line-height:1; letter-spacing:-1px; color:var(--text);
+      min-width:40px; text-align:center;
+    }
+
+    .report-body {
+      display:flex; flex-direction:column; gap:6px;
+      min-width:0;
+    }
+
+    .report-name {
+      font-family:var(--font-display); font-weight:800; font-size:14px;
+      text-transform:uppercase; letter-spacing:-0.2px;
+    }
+
+    .report-stats {
+      display:flex; gap:12px; align-items:baseline; margin-bottom:4px;
+    }
+    .report-stat {
+      font-family:var(--font-body); font-size:12px; color:var(--text-muted);
+    }
+    .report-stat strong {
+      font-family:var(--font-hero); font-style:italic; font-size:18px;
+      color:var(--text); margin-right:4px; letter-spacing:-0.3px;
+    }
+
+    .report-preview {
+      font-family:var(--font-body); font-size:13px;
+      color:var(--text-muted); line-height:1.5;
+      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+      overflow:hidden;
+    }
+
+    .report-actions {
+      display:flex; flex-direction:column; gap:6px; align-items:flex-end;
+    }
+
+    .status-badge {
+      font-family:var(--font-display); font-weight:800; font-size:9px;
+      text-transform:uppercase; letter-spacing:1.5px;
+      padding:4px 8px;
+    }
+    .status-badge.approved {
+      background:rgba(61,220,132,0.12); color:var(--success);
+    }
+    .status-badge.pending {
+      background:rgba(255,169,77,0.12); color:var(--warning);
+    }
+    .status-badge.editing {
+      background:rgba(255,77,0,0.12); color:var(--accent);
+    }
+
+    .preview-link {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1px;
+      color:var(--text-muted); background:transparent; border:none;
+      cursor:pointer; padding:4px 0;
+    }
+    .preview-link:hover { color:var(--text); }
+
+    /* Bulk action bar */
+    .bulk-bar {
+      background:var(--surface-2); padding:14px 20px;
+      display:flex; justify-content:space-between; align-items:center; gap:12px;
+      flex-wrap:wrap;
+    }
+    .bulk-text {
+      font-family:var(--font-body); font-size:13px; color:var(--text-muted);
+    }
+    .bulk-text strong { color:var(--text); font-weight:700; }
+
+    /* Fixed bottom CTA */
+    .bottom-bar {
+      position:fixed; bottom:0; left:0; right:0;
+      background:var(--surface); border-top:1px solid var(--border-strong);
+      padding:14px 20px;
+      display:grid; grid-template-columns:1fr 2fr; gap:10px;
+      max-width:980px; margin:0 auto;
+      z-index:20;
+    }
+    .bottom-bar__btn {
+      background:var(--surface-2); border:none; color:var(--text);
+      font-family:var(--font-display); font-weight:800; font-size:12px;
+      text-transform:uppercase; letter-spacing:1px;
+      padding:14px; cursor:pointer; transition:background 150ms;
+    }
+    .bottom-bar__btn:hover { background:var(--surface-3); }
+    .bottom-bar__btn--cta {
+      background:var(--accent); color:#fff;
+      box-shadow:0 6px 12px rgba(255,77,0,0.30);
+    }
+    .bottom-bar__btn--cta:hover { background:var(--accent-2); }
+
+    @media (max-width: 600px) {
+      .final-score__us, .final-score__them { font-size:48px; }
+      .report-card { grid-template-columns:auto 1fr; }
+      .report-actions { grid-column:1 / -1; flex-direction:row; align-items:center; justify-content:space-between; }
+      .ai-banner { flex-direction:column; align-items:flex-start; }
+      .btn-secondary { width:100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand-mark"></div>
+      <div class="brand-name">Athlevo Club</div>
+      <div class="role-chip">Antrenör</div>
+    </div>
+    <button class="btn-ghost">← Maça Geri Dön</button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-eyebrow">Maç Tamamlandı · 14 May 2026</div>
+    <h1 class="match-title">Beşiktaş U14 vs Galatasaray U14</h1>
+    <div class="final-score">
+      <span class="final-score__us">68</span>
+      <span class="final-score__sep">—</span>
+      <span class="final-score__them">62</span>
+      <span class="final-score__result">Galibiyet</span>
+    </div>
+  </section>
+
+  <div class="ai-banner">
+    <div class="ai-banner__left">
+      <div class="ai-banner__icon">AI</div>
+      <div class="ai-banner__text">
+        <strong>12 sporcu için raporlar üretildi.</strong>
+        <small>Her rapor sporcunun maç performansı + sezon ilerlemesini içeriyor. Onayla ve velilere gönder.</small>
+      </div>
+    </div>
+    <button class="btn-secondary">Hepsini Onayla</button>
+  </div>
+
+  <div class="section-header">
+    <span class="section-text">Sporcu Raporları</span>
+    <span class="section-counter">3 / 12 onaylı</span>
+  </div>
+
+  <div class="reports">
+
+    <!-- Approved -->
+    <article class="report-card">
+      <div class="report-jersey">7</div>
+      <div class="report-body">
+        <div class="report-name">Mehmet Yılmaz</div>
+        <div class="report-stats">
+          <span class="report-stat"><strong>12</strong>Sayı</span>
+          <span class="report-stat"><strong>4</strong>Asist</span>
+          <span class="report-stat"><strong>6</strong>Ribaund</span>
+        </div>
+        <p class="report-preview">Mehmet bugün gerçekten farklıydı. 12 sayı, 4 asist — geçen maça göre net bir sıçrama. En güzeli, takımı oynatma içgüdüsü gelişiyor. Üzerinde çalışacağımız şey top kayıpları.</p>
+      </div>
+      <div class="report-actions">
+        <span class="status-badge approved">Onaylı ✓</span>
+        <button class="preview-link">Önizle</button>
+      </div>
+    </article>
+
+    <article class="report-card">
+      <div class="report-jersey">11</div>
+      <div class="report-body">
+        <div class="report-name">Ali Demir</div>
+        <div class="report-stats">
+          <span class="report-stat"><strong>8</strong>Sayı</span>
+          <span class="report-stat"><strong>2</strong>Asist</span>
+          <span class="report-stat"><strong>9</strong>Ribaund</span>
+        </div>
+        <p class="report-preview">Ali bu maçta savunmada müthişti — 9 ribaund sezonun en iyi rakamı. Özellikle 4. periyotta üst üste 3 ribaund alıp takıma moral verdi. Hücumda biraz daha cesur olmasını isteriz.</p>
+      </div>
+      <div class="report-actions">
+        <span class="status-badge approved">Onaylı ✓</span>
+        <button class="preview-link">Önizle</button>
+      </div>
+    </article>
+
+    <article class="report-card">
+      <div class="report-jersey">23</div>
+      <div class="report-body">
+        <div class="report-name">Can Şahin</div>
+        <div class="report-stats">
+          <span class="report-stat"><strong>14</strong>Sayı</span>
+          <span class="report-stat"><strong>1</strong>Asist</span>
+          <span class="report-stat"><strong>11</strong>Ribaund</span>
+        </div>
+        <p class="report-preview">Can'ın double-double'ı maçın kilidini açtı. 14 sayı, 11 ribaund — pivot pozisyonu için tam istediğimiz performans. Antrenmandaki süreklilik kendini gösteriyor.</p>
+      </div>
+      <div class="report-actions">
+        <span class="status-badge approved">Onaylı ✓</span>
+        <button class="preview-link">Önizle</button>
+      </div>
+    </article>
+
+    <!-- Pending review -->
+    <article class="report-card">
+      <div class="report-jersey">5</div>
+      <div class="report-body">
+        <div class="report-name">Burak Kaya</div>
+        <div class="report-stats">
+          <span class="report-stat"><strong>4</strong>Sayı</span>
+          <span class="report-stat"><strong>3</strong>Asist</span>
+          <span class="report-stat"><strong>2</strong>Ribaund</span>
+        </div>
+        <p class="report-preview">Burak yedek kulübesinden geldi ve takımı dinlendiren değerli bir 12 dakika oynadı. 3 asist net bir oyunkurucu refleksi. Önümüzdeki maçta daha uzun süre verebiliriz.</p>
+      </div>
+      <div class="report-actions">
+        <span class="status-badge pending">Bekliyor</span>
+        <button class="preview-link">Önizle / Düzenle</button>
+      </div>
+    </article>
+
+    <article class="report-card">
+      <div class="report-jersey">9</div>
+      <div class="report-body">
+        <div class="report-name">Emre Aslan</div>
+        <div class="report-stats">
+          <span class="report-stat"><strong>9</strong>Sayı</span>
+          <span class="report-stat"><strong>2</strong>Asist</span>
+          <span class="report-stat"><strong>3</strong>Ribaund</span>
+        </div>
+        <p class="report-preview">Emre orta saha enerjisi yüksekti. 9 sayı temiz şutlardan geldi, 2/3 üçlük kabul edilebilir. Antrenmanda penetrasyon çalışmasına devam — kapalı alandaki kararları daha hızlı olmalı.</p>
+      </div>
+      <div class="report-actions">
+        <span class="status-badge editing">Düzenleniyor</span>
+        <button class="preview-link">Tamamla</button>
+      </div>
+    </article>
+
+    <article class="report-card">
+      <div class="report-jersey">14</div>
+      <div class="report-body">
+        <div class="report-name">Tolga Erdoğan</div>
+        <div class="report-stats">
+          <span class="report-stat"><strong>2</strong>Sayı</span>
+          <span class="report-stat"><strong>0</strong>Asist</span>
+          <span class="report-stat"><strong>1</strong>Ribaund</span>
+        </div>
+        <p class="report-preview">Tolga için gelişim maçıydı — sadece 6 dakika sahadaydı. Bu kısa sürede de istekli oynadı. Antrenman performansını maça da yansıtması için ek süreyi hak ediyor.</p>
+      </div>
+      <div class="report-actions">
+        <span class="status-badge pending">Bekliyor</span>
+        <button class="preview-link">Önizle / Düzenle</button>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="bulk-bar">
+    <div class="bulk-text"><strong>9 sporcu</strong> daha onayını bekliyor. Onaylamadan gönderemezsin.</div>
+    <button class="btn-secondary">Tümünü Hızlı Onayla</button>
+  </div>
+
+  <nav class="bottom-bar">
+    <button class="bottom-bar__btn">Sonra</button>
+    <button class="bottom-bar__btn bottom-bar__btn--cta">12 Veliye Gönder →</button>
+  </nav>
+
+</body>
+</html>

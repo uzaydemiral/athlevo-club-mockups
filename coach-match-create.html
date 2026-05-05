@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Yeni Maç · Antrenör Paneli</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#0F0D0C; --surface:#1A1714; --surface-2:#26211D; --surface-3:#322B26;
+      --accent:#FF4D00; --accent-2:#FF6A26;
+      --text:#F5F5F5; --text-muted:#8A857F; --text-dim:#575451;
+      --border:rgba(255,255,255,0.06); --border-strong:rgba(255,255,255,0.12);
+      --success:#3DDC84; --error:#FF4545; --warning:#FFA94D;
+      --font-display:"Cabinet Grotesk",system-ui,sans-serif;
+      --font-hero:"Instrument Serif",Georgia,serif;
+      --font-body:"DM Sans",system-ui,sans-serif;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html, body { background:var(--bg); color:var(--text); font-family:var(--font-body); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; min-height:100vh; padding-bottom:96px; }
+    body { max-width:720px; margin:0 auto; }
+
+    /* Top bar */
+    .topbar {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 20px; background:var(--surface); border-bottom:1px solid var(--border);
+      position:sticky; top:0; z-index:10;
+    }
+    .topbar-left { display:flex; align-items:center; gap:10px; }
+    .brand-mark { width:4px; height:20px; background:var(--accent); }
+    .brand-name { font-family:var(--font-display); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:1.5px; }
+    .role-chip { font-family:var(--font-display); font-weight:800; font-size:9px; text-transform:uppercase; letter-spacing:1.5px; padding:4px 8px; background:var(--surface-2); color:var(--text-muted); }
+    .btn-ghost { background:transparent; border:none; color:var(--text-muted); font-family:var(--font-display); font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:1px; padding:8px 12px; cursor:pointer; }
+    .btn-ghost:hover { color:var(--text); }
+
+    /* Page header */
+    .page-header {
+      padding:24px 20px 16px;
+      border-bottom:1px solid var(--border);
+    }
+    .page-eyebrow {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:2px; color:var(--accent);
+      margin-bottom:8px;
+    }
+    .page-title {
+      font-family:var(--font-display); font-weight:800; font-size:32px;
+      text-transform:uppercase; letter-spacing:-0.8px; line-height:0.95;
+      margin-bottom:6px;
+    }
+    .page-sub {
+      font-family:var(--font-body); font-size:13px; color:var(--text-muted);
+    }
+
+    /* Form */
+    .form { padding:24px 20px; display:flex; flex-direction:column; gap:28px; }
+
+    .field-group { display:flex; flex-direction:column; gap:12px; }
+
+    .field-label {
+      font-family:var(--font-display); font-weight:800; font-size:11px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+    }
+
+    .field-helper {
+      font-family:var(--font-body); font-size:12px; color:var(--text-dim);
+      margin-top:-6px;
+    }
+
+    /* Match type — radio cards */
+    .type-grid {
+      display:grid; grid-template-columns:repeat(2, 1fr); gap:8px;
+    }
+    @media (min-width: 600px) { .type-grid { grid-template-columns:repeat(4, 1fr); } }
+
+    .type-option {
+      background:var(--surface);
+      border:1px solid var(--border-strong);
+      padding:16px 12px;
+      cursor:pointer;
+      transition:all 150ms ease-out;
+      text-align:left;
+      position:relative;
+    }
+    .type-option:hover { background:var(--surface-2); }
+    .type-option.selected {
+      background:var(--surface-2);
+      border-color:var(--accent);
+    }
+    .type-option.selected::after {
+      content:"";
+      position:absolute; top:0; left:0; bottom:0; width:3px;
+      background:var(--accent);
+    }
+
+    .type-option__name {
+      font-family:var(--font-display); font-weight:800; font-size:13px;
+      text-transform:uppercase; letter-spacing:0.3px;
+      margin-bottom:4px;
+    }
+    .type-option__desc {
+      font-family:var(--font-body); font-size:11px; color:var(--text-muted);
+      line-height:1.4;
+    }
+
+    /* Inputs */
+    .input, .select {
+      background:var(--surface);
+      border:1px solid var(--border-strong);
+      color:var(--text);
+      font-family:var(--font-body);
+      font-size:15px;
+      padding:14px 16px;
+      width:100%;
+      outline:none;
+      transition:border-color 150ms ease-out;
+    }
+    .input:focus, .select:focus { border-color:var(--accent); }
+    .input::placeholder { color:var(--text-dim); }
+
+    /* Datetime row */
+    .datetime-row {
+      display:grid; grid-template-columns:2fr 1fr; gap:8px;
+    }
+
+    /* Venue toggle */
+    .venue-toggle {
+      display:grid; grid-template-columns:1fr 1fr; gap:1px;
+      background:var(--border-strong);
+      margin-bottom:10px;
+    }
+    .venue-btn {
+      background:var(--surface);
+      border:none;
+      color:var(--text-muted);
+      font-family:var(--font-display); font-weight:800; font-size:12px;
+      text-transform:uppercase; letter-spacing:1px;
+      padding:14px;
+      cursor:pointer;
+      transition:all 150ms ease-out;
+    }
+    .venue-btn.active {
+      background:var(--surface-2);
+      color:var(--accent);
+    }
+    .venue-btn:hover:not(.active) { color:var(--text); }
+
+    /* Roster */
+    .roster-header {
+      display:flex; justify-content:space-between; align-items:baseline;
+      margin-bottom:10px;
+    }
+    .roster-counter {
+      font-family:var(--font-hero); font-style:italic; font-size:24px;
+      color:var(--text); letter-spacing:-0.5px;
+    }
+    .roster-counter small {
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+      margin-left:4px;
+    }
+
+    .roster-actions {
+      display:flex; gap:8px;
+    }
+    .roster-action {
+      background:transparent; border:1px solid var(--border-strong);
+      color:var(--text-muted);
+      font-family:var(--font-display); font-weight:800; font-size:10px;
+      text-transform:uppercase; letter-spacing:1px;
+      padding:6px 10px; cursor:pointer;
+    }
+    .roster-action:hover { color:var(--text); border-color:var(--text-muted); }
+
+    .roster-list {
+      display:grid; gap:1px;
+      background:var(--border);
+      max-height:340px;
+      overflow-y:auto;
+    }
+    .roster-row {
+      background:var(--surface);
+      padding:12px 14px;
+      display:grid; grid-template-columns:auto 1fr auto; gap:14px;
+      align-items:center;
+      cursor:pointer;
+      transition:background 100ms ease-out;
+    }
+    .roster-row:hover { background:var(--surface-2); }
+    .roster-row.selected {
+      background:var(--surface-2);
+      border-left:3px solid var(--accent);
+      padding-left:11px;
+    }
+
+    .roster-jersey {
+      font-family:var(--font-hero); font-style:italic; font-size:24px;
+      color:var(--text); letter-spacing:-0.5px;
+      min-width:36px; text-align:center;
+    }
+
+    .roster-info { display:flex; flex-direction:column; gap:2px; }
+    .roster-name {
+      font-family:var(--font-body); font-size:14px; color:var(--text);
+      font-weight:500;
+    }
+    .roster-meta {
+      font-family:var(--font-display); font-weight:800; font-size:9px;
+      text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+    }
+
+    .check-box {
+      width:20px; height:20px;
+      border:2px solid var(--border-strong);
+      background:transparent;
+      display:flex; align-items:center; justify-content:center;
+      transition:all 150ms ease-out;
+      flex-shrink:0;
+    }
+    .roster-row.selected .check-box {
+      background:var(--accent);
+      border-color:var(--accent);
+    }
+    .check-box::after {
+      content:"";
+      width:10px; height:6px;
+      border-left:2px solid #fff;
+      border-bottom:2px solid #fff;
+      transform:rotate(-45deg) translateY(-1px);
+      opacity:0;
+      transition:opacity 100ms;
+    }
+    .roster-row.selected .check-box::after { opacity:1; }
+
+    /* Bottom bar */
+    .bottom-bar {
+      position:fixed; bottom:0; left:0; right:0;
+      background:var(--surface); border-top:1px solid var(--border-strong);
+      padding:14px 20px;
+      display:grid; grid-template-columns:1fr 2fr; gap:10px;
+      max-width:720px; margin:0 auto;
+      z-index:20;
+    }
+    .bottom-bar__btn {
+      background:var(--surface-2); border:none; color:var(--text);
+      font-family:var(--font-display); font-weight:800; font-size:12px;
+      text-transform:uppercase; letter-spacing:1px;
+      padding:14px; cursor:pointer; transition:background 150ms;
+    }
+    .bottom-bar__btn:hover { background:var(--surface-3); }
+    .bottom-bar__btn--cta {
+      background:var(--accent); color:#fff;
+      box-shadow:0 6px 12px rgba(255,77,0,0.30);
+    }
+    .bottom-bar__btn--cta:hover { background:var(--accent-2); }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand-mark"></div>
+      <div class="brand-name">Athlevo Club</div>
+      <div class="role-chip">Antrenör</div>
+    </div>
+    <button class="btn-ghost">← Geri</button>
+  </header>
+
+  <div class="page-header">
+    <div class="page-eyebrow">U14 A Takım · Yeni Maç</div>
+    <h1 class="page-title">Maçı Hazırla</h1>
+    <p class="page-sub">Tip ve tarih bilgilerini gir, kadro seç, sahaya çık.</p>
+  </div>
+
+  <form class="form" onsubmit="event.preventDefault(); alert('Mockup: maç başlıyor.');">
+
+    <!-- Match type -->
+    <div class="field-group">
+      <label class="field-label">Maç Tipi</label>
+      <div class="type-grid">
+        <button type="button" class="type-option selected">
+          <div class="type-option__name">Lig</div>
+          <div class="type-option__desc">Resmi sezon karşılaşması</div>
+        </button>
+        <button type="button" class="type-option">
+          <div class="type-option__name">Hazırlık</div>
+          <div class="type-option__desc">Antrenman / dostluk maçı</div>
+        </button>
+        <button type="button" class="type-option">
+          <div class="type-option__name">Kupa</div>
+          <div class="type-option__desc">Türkiye Kupası vb.</div>
+        </button>
+        <button type="button" class="type-option">
+          <div class="type-option__name">Turnuva</div>
+          <div class="type-option__desc">Davet turnuvası</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Date + time -->
+    <div class="field-group">
+      <label class="field-label">Tarih & Saat</label>
+      <div class="datetime-row">
+        <input class="input" type="date" value="2026-05-21" required>
+        <input class="input" type="time" value="14:30" required>
+      </div>
+    </div>
+
+    <!-- Opponent -->
+    <div class="field-group">
+      <label class="field-label">Rakip Takım</label>
+      <input class="input" type="text" placeholder="Galatasaray U14" value="Galatasaray U14" required>
+      <p class="field-helper">Tam takım adını yaz — raporda ve sosyal paylaşımda görünür.</p>
+    </div>
+
+    <!-- League / context (only shown if league type) -->
+    <div class="field-group">
+      <label class="field-label">Lig / Etkinlik</label>
+      <select class="select">
+        <option>U14 Bölge Ligi · 8. Hafta</option>
+        <option>U14 Türkiye Şampiyonası — Eleme</option>
+        <option>Diğer (manuel gir)</option>
+      </select>
+    </div>
+
+    <!-- Venue -->
+    <div class="field-group">
+      <label class="field-label">Saha</label>
+      <div class="venue-toggle">
+        <button type="button" class="venue-btn active">Ev Sahibi</button>
+        <button type="button" class="venue-btn">Deplasman</button>
+      </div>
+      <input class="input" type="text" placeholder="Beşiktaş Akatlar Spor Salonu" value="Beşiktaş Akatlar Spor Salonu">
+    </div>
+
+    <!-- Roster -->
+    <div class="field-group">
+      <div class="roster-header">
+        <label class="field-label">Kadro Seçimi</label>
+        <div>
+          <span class="roster-counter">8<small>/ 12 SEÇİLDİ</small></span>
+        </div>
+      </div>
+      <div class="roster-actions">
+        <button type="button" class="roster-action">Tümünü Seç</button>
+        <button type="button" class="roster-action">Son Maç Kadrosu</button>
+        <button type="button" class="roster-action">Temizle</button>
+      </div>
+
+      <div class="roster-list">
+
+        <div class="roster-row selected">
+          <div class="roster-jersey">7</div>
+          <div class="roster-info">
+            <div class="roster-name">Mehmet Yılmaz</div>
+            <div class="roster-meta">Guard · Sezon 9.4 sayı/maç</div>
+          </div>
+          <div class="check-box"></div>
+        </div>
+
+        <div class="roster-row selected">
+          <div class="roster-jersey">11</div>
+          <div class="roster-info">
+            <div class="roster-name">Ali Demir</div>
+            <div class="roster-meta">Forward · Sezon 7.2 sayı/maç</div>
+          </div>
+          <div class="check-box"></div>
+        </div>
+
+        <div class="roster-row selected">
+          <div class="roster-jersey">23</div>
+          <div class="roster-info">
+            <div class="roster-name">Can Şahin</div>
+            <div class="roster-meta">Center · Sezon 11.8 sayı/maç</div>
+          </div>
+          <div class="check-box"></div>
+        </div>
+
+        <div class="roster-row selected">
+          <div class="roster-jersey">5</div>
+          <div class="roster-info">
+            <div class="roster-name">Burak Kaya</div>
+            <div class="roster-meta">Guard · Sezon 4.5 sayı/maç</div>
+          </div>
+          <div class="check-box"></div>
+        </div>
+
+        <div class="roster-row selected">
+          <div class="roster-jersey">9</div>
+          <div class="roster-info">
+            <div class="roster-name">Emre Aslan</div>
+            <div class="roster-meta">Forward · Sezon 6.8 sayı/maç</div>
+          </div>
+          <div class="check-box"></div>
+        </div>
+
+        <div class="roster-row selected">
+          <div class="roster-jersey">14</div>
+          <div class="roster-info">
+            <div class="roster-name">Tolga Erdoğan</div>
+            <div class="roster-meta">Guard · Sezon 3.1 sayı/maç</div>
+          </div>
+          <div class="check-box"></div>
+        </div>
+
+        <div class="roster-row selected">
+          <div class="roster-jersey">21</div>
+          <div class="roster-info">
+            <div class="roster-name">Deniz Koç</div>
+            <div class="roster-meta">Forward · Sezon 5.4 sayı/maç</div>
+          </div>
+          <div class="check-box"></div>
+        </div>
+
+        <div class="roster-row selected">
+          <div class="roster-jersey">33</div>
+          <div class="roster-info">
+            <div class="roster-name">Berk Akın</div>
+            <div class="roster-meta">Center · Sezon 8.9 sayı/maç</div>
+          </div>
+          <div class="check-box"></div>
+        </div>
+
+        <div class="roster-row">
+          <div class="roster-jersey">17</div>
+          <div class="roster-info">
+            <div class="roster-name">Kaan Türk</div>
+            <div class="roster-meta">Guard · Sezon 2.4 sayı/maç</div>
+          </div>
+          <div class="check-box"></div>
+        </div>
+
+        <div class="roster-row">
+          <div class="roster-jersey">28</div>
+          <div class="roster-info">
+            <div class="roster-name">Mert Yıldız</div>
+            <div class="roster-meta">Forward · Sezon 4.0 sayı/maç</div>
+          </div>
+          <div class="check-box"></div>
+        </div>
+
+      </div>
+      <p class="field-helper">Kadro 12'ye kadar genişletilebilir. Sonradan değiştirilebilir.</p>
+    </div>
+
+  </form>
+
+  <nav class="bottom-bar">
+    <button class="bottom-bar__btn">Kaydet, Sonra</button>
+    <button class="bottom-bar__btn bottom-bar__btn--cta">Maçı Başlat →</button>
+  </nav>
+
+</body>
+</html>
